@@ -1,0 +1,9 @@
+:host {
+    &.impassible {
+        background-color: gray;
+    }
+
+    $border-default: solid black 1px;
+    border-top: $border-default;
+    border-left: $border-default;
+}

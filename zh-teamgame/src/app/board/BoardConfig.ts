@@ -1,12 +1,15 @@
 import { Observable } from "rxjs";
+import { SpaceConfig } from "../space/SpaceConfig";
 
 export interface BoardConfig {
     /**number of rows on board */
-    rowCount?: number;
+    readonly rowCount?: number;
     /**height in pixels of each row*/
-    rowSize?: number;
+    readonly rowSize?: number;
     /**number of columns on board */
-    columnCount?: number;
+    readonly columnCount?: number;
     /**width in pixels of each column*/
-    columnSize?: number;
+    readonly columnSize?: number;
+    /**Callback to get a particular space's config */
+    getSpaceConfig(rowIndex: number, columnIndex: number): SpaceConfig;
 }

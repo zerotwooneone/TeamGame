@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { isObservable, Observable, Subscription } from 'rxjs';
+import { SpaceConfig } from '../space/SpaceConfig';
 import { BoardConfig } from './BoardConfig';
 
 @Component({
@@ -51,12 +52,42 @@ export class BoardComponent {
   private setConfig(config: SanitizedBoardConfig): void {
     this._columnDefinitions = this.getGridDefinition(config.columnSize, config.columnCount);
     this._rowDefinitions = this.getGridDefinition(config.rowSize, config.rowCount);
+
+    this.spaces = Array
+      .from({ length: this._boardConfig.rowCount }, (v, i) => i)
+      .map(rowIndex =>
+        Array
+          .from({ length: this._boardConfig.columnCount }, (v, i) => i)
+          .map(columnIndex => { return this._boardConfig.getSpaceConfig(rowIndex, columnIndex); }))
+      .flatMap(a => a);
   }
+  /**Row major order list of all spaces */
+  spaces: readonly SpaceConfig[] = [];
   private static readonly DefaultBoardConfig: SanitizedBoardConfig = {
     columnCount: 5,
     columnSize: 100,
     rowCount: 5,
-    rowSize: 100
+    rowSize: 100,
+    getSpaceConfig: BoardComponent.DefaultSpaceConfigFactory
+  }
+  private static DefaultSpaceConfigFactory(rowIndex: number, columnIndex: number): SpaceConfig {
+    return {
+      contents: [],
+      neighbors: {
+        N: {},
+        NE: {},
+        NW: {},
+
+        E: {},
+        W: {},
+
+        S: {},
+        SE: {},
+        SW: {},
+      },
+      columnIndex: columnIndex,
+      rowIndex: rowIndex
+    };
   }
   private _columnDefinitions = "";
   get columnDefinitions(): string {
@@ -80,6 +111,8 @@ interface SanitizedBoardConfig {
   rowSize: number;
   columnCount: number;
   columnSize: number;
+  /**Callback to get a particular space's config */
+  getSpaceConfig(rowIndex: number, columnIndex: number): SpaceConfig;
 }
 
 
