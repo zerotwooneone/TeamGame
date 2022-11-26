@@ -10,35 +10,10 @@ import { SpaceConfig } from './space/SpaceConfig';
 })
 export class AppComponent implements OnInit {
   title = 'zh-teamgame';
-  boardConfig: BoardConfig = {
-    columnCount: 1,
-    rowCount: 1,
-    columnSize: 1,
-    rowSize: 1,
-    getSpaceConfig: this.dummyGetSpaceConfig.bind(this)
-  };
+  boardConfig?: BoardConfig;
   constructor(readonly boardService: BoardService) { }
   async ngOnInit(): Promise<void> {
     const boardConfig = await this.boardService.getBoardConfig("");
     this.boardConfig = boardConfig;
-  }
-  private dummyGetSpaceConfig(rowIndex: number, columnIndex: number): SpaceConfig {
-    return {
-      columnIndex: 1,
-      rowIndex: 1,
-      contents: [],
-      neighbors: {
-        N: {},
-        NE: {},
-        NW: {},
-
-        E: {},
-        W: {},
-
-        S: {},
-        SE: {},
-        SW: {},
-      }
-    };
   }
 }

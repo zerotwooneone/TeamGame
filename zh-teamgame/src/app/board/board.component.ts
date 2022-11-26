@@ -12,11 +12,14 @@ export class BoardComponent {
   private _boardConfig = BoardComponent.DefaultBoardConfig;
   private _configSubscription: Subscription | undefined;
   @Input()
-  set boardConfig(val: BoardConfig | Observable<BoardConfig>) {
+  set boardConfig(val: BoardConfig | Observable<BoardConfig> | undefined) {
     if (this._configSubscription) {
       this._configSubscription.unsubscribe();
     }
 
+    if (typeof val === "undefined") {
+      return;
+    }
     if (isObservable(val)) {
       this._configSubscription = val.subscribe(c => {
         this._boardConfig = this.sanitizeConfig(c);
