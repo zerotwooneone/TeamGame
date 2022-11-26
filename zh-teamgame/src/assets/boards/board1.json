@@ -1,0 +1,10 @@
+{
+    "rows":[
+        [{"impassible": true},    {}, {}, {}, {"impassible": true}],
+        [{"impassible": true},    {"impassible": true}, {}, {"impassible": true}, {"impassible": true}],
+        [{},    {}, {}, {}, {}],
+        [{},    {}, {}, {}, {}],
+        [{},    {}, {}, {}, {}]
+    ],
+    "spaceSize": 100
+}
