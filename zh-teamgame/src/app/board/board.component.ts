@@ -18,7 +18,7 @@ export class BoardComponent {
     }
 
     if (typeof val === "undefined") {
-      return;
+      val = BoardComponent.DefaultBoardConfig;
     }
     if (isObservable(val)) {
       this._configSubscription = val.subscribe(c => {
