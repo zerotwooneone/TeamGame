@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { BoardComponent } from './board/board.component';
 import { SpaceComponent } from './space/space.component';
+import { BusModule } from './bus/bus.module';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { SpaceComponent } from './space/space.component';
     SpaceComponent
   ],
   imports: [
+    BusModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

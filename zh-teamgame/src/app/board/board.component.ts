@@ -27,8 +27,18 @@ export class BoardComponent {
     this._boardConfig = this.sanitizeConfig(val);
     this.setConfig(this._boardConfig);
   }
+  private _columnDefinitions = "";
+  get columnDefinitions(): string {
+    return this._columnDefinitions;
+  }
+  private _rowDefinitions = "";
+  get rowDefinitions(): string {
+    return this._rowDefinitions;
+  }
+  /**Row major order list of all spaces */
+  spaces: readonly SpaceConfig[] = [];
   public constructor() {
-    this.setConfig(this._boardConfig);
+    this.setConfig(this._boardConfig);    
   }
   private sanitizeConfig(config: BoardConfig): SanitizedBoardConfig {
     const sanitized = Object.assign({}, BoardComponent.DefaultBoardConfig, config);
@@ -60,9 +70,7 @@ export class BoardComponent {
           .from({ length: this._boardConfig.columnCount }, (v, i) => i)
           .map(columnIndex => { return this._boardConfig.getSpaceConfig(rowIndex, columnIndex); }))
       .flatMap(a => a);
-  }
-  /**Row major order list of all spaces */
-  spaces: readonly SpaceConfig[] = [];
+  }  
   private static readonly DefaultBoardConfig: SanitizedBoardConfig = {
     columnCount: 5,
     columnSize: 100,
@@ -88,14 +96,6 @@ export class BoardComponent {
       columnIndex: columnIndex,
       rowIndex: rowIndex
     };
-  }
-  private _columnDefinitions = "";
-  get columnDefinitions(): string {
-    return this._columnDefinitions;
-  }
-  private _rowDefinitions = "";
-  get rowDefinitions(): string {
-    return this._rowDefinitions;
   }
   private getGridDefinition(size: number, count: number): string {
     const pixelSize = `${size}px`;
