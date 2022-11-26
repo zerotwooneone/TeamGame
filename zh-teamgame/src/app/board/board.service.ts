@@ -27,7 +27,7 @@ export class BoardService {
       return prevMax;
     }, 0);
 
-    timer(1000)
+    timer(1)
       .subscribe(() => this.notifySpace(0, 1, { teamToken: { id: "assets/team-tokens/snowflake-green.svg" } }))
 
     return {
