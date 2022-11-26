@@ -9,12 +9,14 @@ import { BoardComponent } from './board/board.component';
 import { SpaceComponent } from './space/space.component';
 import { BusModule } from './bus/bus.module';
 import { HttpClientModule } from '@angular/common/http';
+import { SpaceContentComponent } from './space-content/space-content.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoardComponent,
-    SpaceComponent
+    SpaceComponent,
+    SpaceContentComponent
   ],
   imports: [
     BusModule,

@@ -1,7 +1,8 @@
 import { Component, HostBinding, Input, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { AppBusService } from '../appbus/appbus.service';
 import { SubjectToken } from '../bus/SubjectToken';
+import { ContentConfig } from '../space-content/space-content.component';
 import { SpaceConfig } from './SpaceConfig';
 import { SpaceNotification } from './SpaceNotification';
 
@@ -55,8 +56,12 @@ export class SpaceComponent implements OnDestroy {
     columnIndex: 9999,
     rowIndex: 9999,
   }
+  readonly contentConfigSubject: Subject<ContentConfig>;
+  readonly contentConfig$: Observable<ContentConfig>;
   constructor(readonly bus: AppBusService) {
     this.spaceConfig = SpaceComponent.DefaultSpaceConfig;
+    this.contentConfigSubject = new Subject<ContentConfig>();
+    this.contentConfig$ = this.contentConfigSubject.asObservable();
   }
   ngOnDestroy(): void {
     if (this.notificationSubscription) {
@@ -65,6 +70,10 @@ export class SpaceComponent implements OnDestroy {
   }
   private OnNotification(notification: SpaceNotification): void {
     console.log(`r:${this._spaceConfig.rowIndex} c:${this._spaceConfig.columnIndex} notification:${JSON.stringify(notification)}`);
+    if (notification.teamToken) {
+      //todo: this is a hack we are using the url as the team id
+      this.contentConfigSubject.next({ teamTokenUrl: notification.teamToken.id });
+    }
   }
   /**This is a hack to allow direct calls to each space. We shouldn't use the bus for direct UI access like this */
   public static GetNotificationTopicName(rowIndex: number, columnIndex: number): string {
