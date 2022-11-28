@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { filter, take } from 'rxjs';
-import { BoardService } from 'src/app/board/board.service';
+import { BoardLayout } from '../board/BoardLayout';
 import { DomainModule } from '../domain.module';
 import { DisposableCollection } from '../model/Disposable';
 import { ObservableProperty, ObservablePropertyHelper } from '../model/ObservablePropertyHelper';
+import { TeamConfig } from '../team/TeamConfig';
 import { GameRepositoryService } from './game-repository.service';
-import { GameStartConfig } from './GameStartConfig';
 import { gameState } from './gameState';
 
 @Injectable({
@@ -19,31 +19,29 @@ export class GameService {
   }
   private readonly _gameDisposables: DisposableCollection;
   constructor(
-    readonly gameRepo: GameRepositoryService,
-    readonly boardService: BoardService) {
+    readonly gameRepo: GameRepositoryService) {
     this._gameDisposables = new DisposableCollection();
     this.starting = new ObservablePropertyHelper<void>();
   }
-  async start(state: GameStartConfig): Promise<void> {
-    const game = this.gameRepo.create(state.id);
+  async start(state: { readonly id: string, readonly board: BoardLayout, readonly teams: readonly TeamConfig[] }): Promise<void> {
+    const game = this.gameRepo.create(
+      state.id,
+      state.board,
+      state.teams);
     this.gameRepo.put(game);
-    if (!game) {
-      console.error("cannot start a game because the game doesn't exist");
-      return;
-    }
     this._gameDisposables.empty();
 
     this._gameDisposables.pushSubscription(game.gameState.observable$.pipe(
       filter(v => v >= gameState.started),
       take(1)
     ).subscribe(_ => {
-      if (!game.boardConfig || !game.teams) {
+      if (!game.board || !game.teams) {
         console.error("got a bad board config");
         return;
       }
       this.starting.next();
     }));
-    game.start(state);
+    game.start();
   }
 }
 

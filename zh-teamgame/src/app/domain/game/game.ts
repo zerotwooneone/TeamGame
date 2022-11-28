@@ -1,37 +1,36 @@
-import { BoardLayout } from "src/app/board/BoardLayout";
+import { Board } from "../board/board";
 import { ObservableProperty, ObservablePropertyHelper } from "../model/ObservablePropertyHelper";
-import { GameStartConfig, Team as ConfigTeam } from "./GameStartConfig";
+import { Team } from "../team/team";
 import { gameState } from "./gameState";
-import { ReadonlyTeam, Team } from "./Team";
 
 export class Game {
     private readonly _gameState: ObservablePropertyHelper<gameState> = new ObservablePropertyHelper<gameState>(gameState.preStart);
     get gameState(): ObservableProperty<gameState> {
         return this._gameState.property;
     }
-    private _teams?: readonly Team[];
-    get teams(): readonly ReadonlyTeam[] | undefined {
-        return this._teams as ReadonlyTeam[];
-    }
-    private _boardConfig?: BoardLayout;
-    get boardConfig(): BoardLayout | undefined {
-        return this._boardConfig;
-    }
-    constructor(readonly id: string) { }
+    constructor(
+        readonly id: string,
+        readonly board: Board,
+        readonly teams: Team[]) { }
 
-    public start(config: GameStartConfig): void {
+    public start(): void {
         if (!this.gameState.assignable.hasBeenSet || (this.gameState.assignable.value > gameState.preStart)) {
             console.error("game state is not startable");
             return;
         }
-        this._teams = this.createTeams(config.teams);
-        this._boardConfig = config.board;
-
         this._gameState.next(gameState.started);
     }
 
-    private createTeams(configTeams: readonly ConfigTeam[]): Team[] {
-        return configTeams.map(t => Object.assign({}, t));
+    public static Factory(
+        id: string,
+        board: Board,
+        teams: readonly Team[]
+    ): Game {
+        return new Game(
+            id,
+            board,
+            teams.map(i => i)
+        )
     }
 }
 
