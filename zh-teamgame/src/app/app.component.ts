@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { switchMap, take } from 'rxjs';
 import { BoardService } from './board/board.service';
 import { BoardConfig } from './board/BoardConfig';
-import { BoardJson } from './board/BoardJson';
 import { GameService } from './domain/game/game.service';
 import { TeamLocation } from './domain/game/GameStartConfig';
 

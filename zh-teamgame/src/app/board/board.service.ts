@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, timer } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { AppBusService } from '../appbus/appbus.service';
 import { SubjectToken } from '../bus/SubjectToken';
 import { SpaceComponent } from '../space/space.component';
