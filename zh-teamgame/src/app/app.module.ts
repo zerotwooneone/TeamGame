@@ -10,6 +10,7 @@ import { SpaceComponent } from './space/space.component';
 import { BusModule } from './bus/bus.module';
 import { HttpClientModule } from '@angular/common/http';
 import { SpaceContentComponent } from './space-content/space-content.component';
+import { DomainModule } from './domain/domain.module';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { SpaceContentComponent } from './space-content/space-content.component';
   ],
   imports: [
     BusModule,
+    DomainModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,

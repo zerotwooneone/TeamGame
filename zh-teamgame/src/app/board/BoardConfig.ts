@@ -1,4 +1,3 @@
-import { Observable } from "rxjs";
 import { SpaceConfig } from "../space/SpaceConfig";
 
 export interface BoardConfig {

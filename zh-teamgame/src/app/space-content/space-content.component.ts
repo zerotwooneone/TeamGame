@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { dynamic } from '../domain/model/dynamic';
 
 @Component({
   selector: 'zh-space-content',
@@ -9,6 +9,12 @@ import { Observable, Subscription } from 'rxjs';
 export class SpaceContentComponent {
 
   public teamTokenUrl: string | null = null;
+
+  @Input()
+  row: number = -1;
+  @Input()
+  column: number = -1;
+
   @Input()
   set contentConfig(config: ContentConfig | null) {
     if (!config) {

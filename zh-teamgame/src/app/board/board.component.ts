@@ -9,7 +9,10 @@ import { BoardConfig } from './BoardConfig';
   styleUrls: ['./board.component.scss']
 })
 export class BoardComponent {
-  private _boardConfig = BoardComponent.DefaultBoardConfig;
+  private _boardConfig?: SanitizedBoardConfig;
+  get isConfigured(): boolean {
+    return !!this._boardConfig;
+  }
   private _configSubscription: Subscription | undefined;
   @Input()
   set boardConfig(val: BoardConfig | Observable<BoardConfig> | undefined) {
@@ -18,7 +21,7 @@ export class BoardComponent {
     }
 
     if (typeof val === "undefined") {
-      val = BoardComponent.DefaultBoardConfig;
+      return;
     }
     if (isObservable(val)) {
       this._configSubscription = val.subscribe(c => {
@@ -40,25 +43,22 @@ export class BoardComponent {
   }
   /**Row major order list of all spaces */
   spaces: readonly SpaceConfig[] = [];
-  public constructor() {
-    this.setConfig(this._boardConfig);    
-  }
   private sanitizeConfig(config: BoardConfig): SanitizedBoardConfig {
-    const sanitized = Object.assign({}, BoardComponent.DefaultBoardConfig, config);
+    const sanitized = Object.assign({}, config) as SanitizedBoardConfig;
     if (!sanitized.columnCount || sanitized.columnCount < 1) {
-      sanitized.columnCount = BoardComponent.DefaultBoardConfig.columnCount;
+      throw new Error("invalid column count");
     }
 
     if (!sanitized.rowCount || sanitized.rowCount < 1) {
-      sanitized.rowCount = BoardComponent.DefaultBoardConfig.rowCount;
+      throw new Error("invalid row count");
     }
 
     if (!sanitized.columnSize || sanitized.columnSize < 1) {
-      sanitized.columnSize = BoardComponent.DefaultBoardConfig.columnSize;
+      throw new Error("invalid column size");
     }
 
     if (!sanitized.rowSize || sanitized.rowSize < 1) {
-      sanitized.rowSize = BoardComponent.DefaultBoardConfig.rowSize;
+      throw new Error("invalid row size");
     }
     return sanitized;
   }
@@ -67,38 +67,12 @@ export class BoardComponent {
     this._rowDefinitions = this.getGridDefinition(config.rowSize, config.rowCount);
 
     this.spaces = Array
-      .from({ length: this._boardConfig.rowCount }, (v, i) => i)
+      .from({ length: config.rowCount }, (v, i) => i)
       .map(rowIndex =>
         Array
-          .from({ length: this._boardConfig.columnCount }, (v, i) => i)
-          .map(columnIndex => { return this._boardConfig.getSpaceConfig(rowIndex, columnIndex); }))
+          .from({ length: config.columnCount }, (v, i) => i)
+          .map(columnIndex => { return config.getSpaceConfig(rowIndex, columnIndex); }))
       .flatMap(a => a);
-  }  
-  private static readonly DefaultBoardConfig: SanitizedBoardConfig = {
-    columnCount: 5,
-    columnSize: 100,
-    rowCount: 5,
-    rowSize: 100,
-    getSpaceConfig: BoardComponent.DefaultSpaceConfigFactory
-  }
-  private static DefaultSpaceConfigFactory(rowIndex: number, columnIndex: number): SpaceConfig {
-    return {
-      contents: [],
-      neighbors: {
-        N: {},
-        NE: {},
-        NW: {},
-
-        E: {},
-        W: {},
-
-        S: {},
-        SE: {},
-        SW: {},
-      },
-      columnIndex: columnIndex,
-      rowIndex: rowIndex
-    };
   }
   private getGridDefinition(size: number, count: number): string {
     const pixelSize = `${size}px`;

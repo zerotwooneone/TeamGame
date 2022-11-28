@@ -69,7 +69,6 @@ export class SpaceComponent implements OnDestroy {
     }
   }
   private OnNotification(notification: SpaceNotification): void {
-    console.log(`r:${this._spaceConfig.rowIndex} c:${this._spaceConfig.columnIndex} notification:${JSON.stringify(notification)}`);
     if (notification.teamToken) {
       //todo: this is a hack we are using the url as the team id
       this.contentConfigSubject.next({ teamTokenUrl: notification.teamToken.id });

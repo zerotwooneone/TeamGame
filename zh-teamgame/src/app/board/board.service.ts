@@ -7,6 +7,7 @@ import { SpaceComponent } from '../space/space.component';
 import { SpaceConfig } from '../space/SpaceConfig';
 import { SpaceNotification } from '../space/SpaceNotification';
 import { BoardConfig } from './BoardConfig';
+import { BoardJson } from './BoardJson';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,10 @@ export class BoardService {
     readonly httpClient: HttpClient,
     readonly bus: AppBusService) { }
 
-  public async getBoardConfig(token: string): Promise<BoardConfig> {
-    const data = await firstValueFrom(this.httpClient.get("assets/boards/board1.json")) as BoardJson;
+  public async getBoardJson(token: string): Promise<BoardJson> {
+    return await firstValueFrom(this.httpClient.get("assets/boards/board1.json")) as BoardJson;
+  }
+  public async getBoardConfig(data: BoardJson): Promise<BoardConfig> {
     const rowCount = data.rows.length;
     const columnCount = data.rows.reduce((prevMax, column) => {
       if (column.length > prevMax) {
@@ -26,9 +29,6 @@ export class BoardService {
       }
       return prevMax;
     }, 0);
-
-    timer(1)
-      .subscribe(() => this.notifySpace(0, 1, { teamToken: { id: "assets/team-tokens/snowflake-green.svg" } }))
 
     return {
       rowCount: rowCount,
@@ -67,14 +67,4 @@ export class BoardService {
     const subjectToken = new SubjectToken<SpaceNotification>(SpaceComponent.GetNotificationTopicName(rowIndex, columnIndex), "SpaceNotification");
     this.bus.publishParam(subjectToken, notification);
   }
-}
-
-interface BoardJson {
-  rows: ColumnArray[];
-  spaceSize: number;
-}
-
-type ColumnArray = SpaceJson[];
-interface SpaceJson {
-  impassible?: boolean;
 }
