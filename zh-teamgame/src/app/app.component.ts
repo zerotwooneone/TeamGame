@@ -23,9 +23,8 @@ export class AppComponent implements OnInit {
       switchMap(async s => await this.OnStarting(s))
     ).subscribe();
 
+    //simulate the backend pushing a new game to us
     this.backend.bootStrapStart();
-
-    this.gameService.create("some game id");
 
     const gameSubscription = this.gameService.starting$.observable$.pipe(
       take(1),

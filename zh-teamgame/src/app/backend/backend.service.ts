@@ -18,6 +18,7 @@ export class BackendService {
   /**this is a placeholder that represents the backend pushing out a new game to us */
   public async bootStrapStart(): Promise<void> {
     this._starting$.next({
+      id: "game id",
       board: await this.getBoardJson("board1"),
       teams: [
         { id: "assets/team-tokens/snowflake-green.svg", location: { row: 0, column: 1 } },
@@ -32,6 +33,7 @@ export class BackendService {
 }
 
 export interface GameStartState {
+  readonly id: string;
   readonly board: Board;
   readonly teams: readonly Team[];
 }

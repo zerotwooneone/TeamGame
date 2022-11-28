@@ -24,12 +24,9 @@ export class GameService {
     this._gameDisposables = new DisposableCollection();
     this.starting = new ObservablePropertyHelper<void>();
   }
-  create(id: string): void {
-    const game = this.gameRepo.create(id);
-    this.gameRepo.put(game);
-  }
   async start(state: GameStartConfig): Promise<void> {
-    const game = this.gameRepo.get();
+    const game = this.gameRepo.create(state.id);
+    this.gameRepo.put(game);
     if (!game) {
       console.error("cannot start a game because the game doesn't exist");
       return;
