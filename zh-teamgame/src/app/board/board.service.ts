@@ -21,7 +21,7 @@ export class BoardService {
   public async getBoardJson(token: string): Promise<BoardJson> {
     return await firstValueFrom(this.httpClient.get("assets/boards/board1.json")) as BoardJson;
   }
-  public async getBoardConfig(data: BoardJson): Promise<BoardConfig> {
+  public getBoardConfig(data: BoardJson): BoardConfig {
     const rowCount = data.rows.length;
     const columnCount = data.rows.reduce((prevMax, column) => {
       if (column.length > prevMax) {

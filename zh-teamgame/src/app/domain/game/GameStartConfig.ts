@@ -2,7 +2,7 @@ import { BoardJson } from "src/app/board/BoardJson";
 
 export interface GameStartConfig {
     readonly board: BoardJson;
-    readonly teams: Team[];
+    readonly teams: readonly Team[];
 }
 
 export interface Team {
