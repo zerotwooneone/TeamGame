@@ -1,7 +1,6 @@
 
-export interface BoardJson {
+export interface BoardLayout {
     readonly rows: readonly ColumnArray[];
-    spaceSize: number;
 }
 
 export type ColumnArray = readonly SpaceJson[];

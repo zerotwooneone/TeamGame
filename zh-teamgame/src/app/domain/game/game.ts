@@ -1,4 +1,4 @@
-import { BoardJson } from "src/app/board/BoardJson";
+import { BoardLayout } from "src/app/board/BoardLayout";
 import { ObservableProperty, ObservablePropertyHelper } from "../model/ObservablePropertyHelper";
 import { GameStartConfig, Team as ConfigTeam } from "./GameStartConfig";
 import { gameState } from "./gameState";
@@ -13,8 +13,8 @@ export class Game {
     get teams(): readonly ReadonlyTeam[] | undefined {
         return this._teams as ReadonlyTeam[];
     }
-    private _boardConfig?: BoardJson;
-    get boardConfig(): BoardJson | undefined {
+    private _boardConfig?: BoardLayout;
+    get boardConfig(): BoardLayout | undefined {
         return this._boardConfig;
     }
     constructor(readonly id: string) { }
