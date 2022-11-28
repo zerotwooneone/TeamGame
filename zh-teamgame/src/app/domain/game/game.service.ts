@@ -46,7 +46,12 @@ export class GameService {
       }
       this.starting.next({ board: game.boardConfig, teams: game.teams });
     }));
-    game.start({ board: boardConfig, teams: [{ id: "assets/team-tokens/snowflake-green.svg", location: { row: 0, column: 1 } }] });
+    game.start({
+      board: boardConfig, teams: [
+        { id: "assets/team-tokens/snowflake-green.svg", location: { row: 0, column: 1 } },
+        { id: "assets/team-tokens/stars.svg", location: { row: 3, column: 4 } }
+      ]
+    });
   }
 }
 
