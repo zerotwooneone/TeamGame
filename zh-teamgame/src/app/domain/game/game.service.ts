@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { filter, take } from 'rxjs';
 import { BoardService } from 'src/app/board/board.service';
+import { DomainModule } from '../domain.module';
 import { DisposableCollection } from '../model/Disposable';
 import { ObservableProperty, ObservablePropertyHelper } from '../model/ObservablePropertyHelper';
 import { GameRepositoryService } from './game-repository.service';
@@ -8,7 +9,7 @@ import { GameStartConfig } from './GameStartConfig';
 import { gameState } from './gameState';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: DomainModule
 })
 export class GameService {
 

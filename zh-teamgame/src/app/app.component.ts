@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { switchMap, take } from 'rxjs';
+import { BackendService, GameStartState, Board as BackendBoard } from './backend/backend.service';
 import { BoardService } from './board/board.service';
 import { BoardConfig } from './board/BoardConfig';
 import { GameService } from './domain/game/game.service';
-import { Team } from './domain/game/GameStartConfig';
+import { SpaceConfig } from './space/SpaceConfig';
 
 @Component({
   selector: 'app-root',
@@ -15,8 +16,14 @@ export class AppComponent implements OnInit {
   boardConfig?: BoardConfig;
   constructor(
     readonly boardService: BoardService,
-    readonly gameService: GameService) { }
+    readonly gameService: GameService,
+    readonly backend: BackendService) { }
   async ngOnInit(): Promise<void> {
+    const startingSubscription = this.backend.starting$.pipe(
+      switchMap(async s => await this.OnStarting(s))
+    ).subscribe();
+
+    this.backend.bootStrapStart();
 
     this.gameService.create("some game id");
 
@@ -27,23 +34,60 @@ export class AppComponent implements OnInit {
       })
     ).subscribe();
 
-    const boardJson = await this.boardService.getBoardJson("");
-    this.boardConfig = this.boardService.getBoardConfig(boardJson);
-    const gameStartState = {
-      board: boardJson,
-      teams: [
-        { id: "assets/team-tokens/snowflake-green.svg", location: { row: 0, column: 1 } },
-        { id: "assets/team-tokens/stars.svg", location: { row: 3, column: 4 } }
-      ]
-    };
+
+  }
+  private async OnStarting(state: GameStartState): Promise<void> {
+    this.boardConfig = this.getBoardConfig(state.board);
 
     //this is a hack to allow the board to render so that the spaces will subscribe to notifications
     await new Promise(resolve => setTimeout(() => { resolve(1); }, 1));
 
-    for (const team of gameStartState.teams as Team[]) {
+    for (const team of state.teams) {
       this.boardService.notifySpace(team.location.row, team.location.column, { teamToken: { id: team.id } });
     }
-    await this.gameService.start(gameStartState);
+    await this.gameService.start(state);
+  }
+
+  public getBoardConfig(data: BackendBoard): BoardConfig {
+    const rowCount = data.rows.length;
+    const columnCount = data.rows.reduce((prevMax, column) => {
+      if (column.length > prevMax) {
+        return column.length;
+      }
+      return prevMax;
+    }, 0);
+
+    return {
+      rowCount: rowCount,
+      columnCount: columnCount,
+      rowSize: data.spaceSize,
+      columnSize: data.spaceSize,
+      getSpaceConfig: this.lookupFunctionFactory(data)
+    }
+  }
+  private lookupFunctionFactory(board: BackendBoard): (rowIndex: number, columnIndex: number) => SpaceConfig {
+    return (rowIndex: number, columnIndex: number) => {
+      const space = board.rows[rowIndex][columnIndex];
+
+      return {
+        columnIndex: columnIndex,
+        rowIndex: rowIndex,
+        contents: [],
+        neighbors: {
+          N: {},
+          NE: {},
+          NW: {},
+
+          E: {},
+          W: {},
+
+          S: {},
+          SE: {},
+          SW: {},
+        },
+        passable: !space.impassible
+      }
+    }
   }
 
 }

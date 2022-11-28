@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { DomainModule } from '../domain.module';
 import { Game } from './game';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: DomainModule
 })
 export class GameRepositoryService {
   private _game?: Game;

@@ -1,10 +1,10 @@
 
 export interface BoardJson {
-    rows: ColumnArray[];
+    readonly rows: readonly ColumnArray[];
     spaceSize: number;
 }
 
-export type ColumnArray = SpaceJson[];
+export type ColumnArray = readonly SpaceJson[];
 export interface SpaceJson {
-    impassible?: boolean;
+    readonly impassible?: boolean;
 }
