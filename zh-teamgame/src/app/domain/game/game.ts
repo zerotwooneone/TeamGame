@@ -9,16 +9,10 @@ export class Game {
     get gameState(): ObservableProperty<gameState> {
         return this._gameState.property;
     }
-    private readonly _teams: { [id: string]: Team };
     constructor(
         readonly id: string,
         readonly board: Board,
-        teams: Team[]) {
-        this._teams = teams.reduce((dict, team) => {
-            dict[team.id] = team;
-            return dict;
-        }, {} as { [id: string]: Team })
-    }
+        private readonly _teams: teamLookup) { }
 
     public start(): void {
         if (!this.gameState.assignable.hasBeenSet || (this.gameState.assignable.value > gameState.preStart)) {
@@ -33,10 +27,14 @@ export class Game {
         board: Board,
         teams: readonly Team[]
     ): Game {
+        const teamLookup = teams.reduce((dict, team) => {
+            dict[team.id] = team;
+            return dict;
+        }, {} as teamLookup)
         return new Game(
             id,
             board,
-            teams.map(i => i)
+            teamLookup
         )
     }
     public handleMove(event: TeamMoveEvent) {
@@ -48,9 +46,11 @@ export class Game {
             }
             const oldLocation = team.location;
             team.move(newTeam.location);
-            this.board.moveTeam(newTeam.id, oldLocation, newTeam.location);
+            this.board.moveTeam({ id: newTeam.id, token: team.token }, oldLocation, newTeam.location);
         }
     }
 }
+
+type teamLookup = { [id: string]: Team };
 
 

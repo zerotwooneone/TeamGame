@@ -9,6 +9,10 @@ import { ContentConfig } from '../space-content/space-content.component';
   styleUrls: ['./space.component.scss']
 })
 export class SpaceComponent implements OnDestroy {
+  private _teamId: string | null = null;
+  get teamId(): string | null {
+    return this._teamId;
+  }
 
   @HostBinding('class.impassible')
   get impassible(): boolean {
@@ -20,8 +24,11 @@ export class SpaceComponent implements OnDestroy {
     this._space = val;
     this._disposables.empty();
     this._disposables.pushSubscription(
-      this._space.teamId$.observable$.subscribe(tid => {
-        this.OnTeamIdChange(tid);
+      this._space.team$.observable$.subscribe(tid => {
+        const { id, token } = tid && tid.id && tid.token
+          ? { id: tid.id, token: tid.token }
+          : { id: null, token: null };
+        this.OnTeamChange(id, token);
       })
     );
   }
@@ -34,9 +41,11 @@ export class SpaceComponent implements OnDestroy {
   ngOnDestroy(): void {
     this._disposables.Dispose();
   }
-  private OnTeamIdChange(teamId: string | null): void {
-    //todo: this is a hack we are using the url as the team id
-    this.contentConfig = { teamTokenUrl: teamId };
+  private OnTeamChange(
+    teamId: string | null,
+    teamToken: string | null): void {
+    this._teamId = teamId;
+    this.contentConfig = { teamTokenUrl: teamToken };
   }
 }
 

@@ -1,4 +1,4 @@
-import { Space } from "../space/space";
+import { Space, SpaceTeam } from "../space/space";
 import { TeamLocation } from "../team/TeamLocation";
 import { BoardLayout, ColumnArray, SpaceDetails } from "./BoardLayout";
 
@@ -10,7 +10,9 @@ export class Board {
         readonly spaceSize: number,
         readonly rowDefinition: string,
         readonly columnDefinition: string) { }
-    public static Factory(layout: BoardLayout): Board {
+    public static Factory(
+        layout: BoardLayout,
+        teamTokenLookup: teamTokenLookup): Board {
         const columnCount = layout.rows.reduce((prevMax, column) => {
             if (column.length > prevMax) {
                 return column.length;
@@ -24,17 +26,28 @@ export class Board {
         return new Board(
             rowCount,
             columnCount,
-            this.GetRows(layout.rows),
+            this.GetRows(layout.rows, teamTokenLookup),
             layout.spaceSize,
             rowDefinition,
             columnDefinition
         )
     }
-    private static GetRows(rows: readonly ColumnArray[]): RowCollection {
+    private static GetRows(
+        rows: readonly ColumnArray[],
+        teamTokenLookup: teamTokenLookup): RowCollection {
         const handleSpaces = (s: SpaceDetails) => {
+            if (s.teamId && !teamTokenLookup[s.teamId]) {
+                console.error(`couldn't find team token for id:${s.teamId}`);
+            }
+            const token = s.teamId
+                ? teamTokenLookup[s.teamId]
+                : null;
+            const teamParam = (s.teamId && token)
+                ? { id: s.teamId, token: token }
+                : null;
             return Space.Factory(
                 !s.impassible,
-                s.teamId);
+                teamParam);
         }
         return rows.map(r => r.map(handleSpaces));
     }
@@ -45,25 +58,27 @@ export class Board {
             .map(_ => pixelSize)
             .reduce((prev, curr) => `${prev} ${curr}`);
     }
-    public moveTeam(teamId: string,
+    public moveTeam(team: SpaceTeam,
         oldLocation: TeamLocation,
         newLocation: TeamLocation) {
         this.removeTeam(oldLocation);
-        this.addTeam(teamId, newLocation);
+        this.addTeam(team, newLocation);
     }
-    private addTeam(teamId: string, location: TeamLocation) {
+    private addTeam(team: SpaceTeam, location: TeamLocation) {
         const space = this.rows[location.row][location.column];
-        space.addTeam(teamId);
+        space.addTeam(team);
     }
     private removeTeam(location: TeamLocation) {
         const space = this.rows[location.row][location.column];
-        if (!space.teamId$.nullable.value) {
+        if (!space.team$.nullable.value) {
             console.warn(`cannot remove team from space r:${location.row} c:${location.column}`);
             return;
         }
         space.removeTeam();
     }
 }
+
+type teamTokenLookup = { readonly [id: string]: string }
 
 export type RowCollection = readonly Row[];
 export type Row = readonly Space[];

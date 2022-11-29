@@ -5,34 +5,39 @@ export class Space {
     get passible(): boolean {
         return this._passible;
     }
-    get teamId$(): NullableObservableProperty<string> {
-        return this._teamId$.property;
+    get team$(): NullableObservableProperty<SpaceTeam> {
+        return this._team$.property;
     }
     constructor(
         private _passible: boolean,
-        private readonly _teamId$: NullableObservablePropertyHelper<string>) { }
+        private readonly _team$: NullableObservablePropertyHelper<SpaceTeam>) { }
     public static Factory(
         passible: boolean,
-        teamId?: string): Space {
-        const idParam = teamId ?? null;
-        const teamIdHelper = new NullableObservablePropertyHelper<string>(
-            idParam,
-            new BehaviorSubject<string | null>(idParam))
+        team: SpaceTeam | null): Space {
+        const teamParam = team ?? null;
+        const teamIdHelper = new NullableObservablePropertyHelper<SpaceTeam>(
+            teamParam,
+            new BehaviorSubject<SpaceTeam | null>(teamParam))
         return new Space(
             passible,
             teamIdHelper);
     }
-    public replaceTeam(teamId?: string): void {
-        this._teamId$.next(teamId ?? null);
+    public replaceTeam(team?: SpaceTeam): void {
+        this._team$.next(team ?? null);
     }
-    public addTeam(teamId: string) {
-        this._teamId$.next(teamId);
+    public addTeam(team: SpaceTeam) {
+        this._team$.next(team);
     }
     public removeTeam() {
-        if (!this.teamId$.nullable.value) {
+        if (!this.team$.nullable.value) {
             console.warn("no team to remove");
             return;
         }
-        this._teamId$.next(null);
+        this._team$.next(null);
     }
 }
+
+export type SpaceTeam = {
+    id: string,
+    token: string
+};

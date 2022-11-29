@@ -14,11 +14,16 @@ export class GameRepositoryService {
   create(
     id: string,
     boardLayout: BoardLayout,
-    teamConfig: readonly TeamConfig[]): Game {
+    teams: readonly TeamConfig[]): Game {
+    const teamTokenLookup = teams.reduce((dict, team) => {
+      dict[team.id] = team.token;
+      return dict;
+    }, {} as { [id: string]: string });
+
     return Game.Factory(
       id,
-      Board.Factory(boardLayout),
-      teamConfig.map(c => Team.Factory(c.id, c.location)));
+      Board.Factory(boardLayout, teamTokenLookup),
+      teams.map(c => Team.Factory(c.id, c.location, c.token)));
   }
   put(game: Game): Promise<void> {
     this._game = game;

@@ -1,10 +1,30 @@
 {
     "rows":[
-        [{"impassible": true},    {"teamId": "assets/team-tokens/snowflake-green.svg"}, {}, {}, {"impassible": true}],
+        [
+            {
+                "impassible": true
+            },
+            {
+                "teamId": "1"
+            },
+            {},
+            {},
+            {
+                "impassible": true
+            }
+        ],
         [{"impassible": true},    {"impassible": true}, {}, {"impassible": true}, {"impassible": true}],
         [{},    {}, {}, {}, {}],
         [{},    {}, {}, {}, {}],
-        [{},    {"teamId":"assets/team-tokens/stars.svg"}, {}, {}, {}]
+        [
+            {},
+            {
+                "teamId": "2"
+            },
+            {},
+            {},
+            {}
+        ]
     ],
     "spaceSize": 100
 }

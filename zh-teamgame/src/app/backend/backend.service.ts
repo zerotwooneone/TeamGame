@@ -20,7 +20,7 @@ export class BackendService {
 
   /**this is a placeholder that represents the backend pushing out a new game to us */
   public async bootStrapStart(): Promise<void> {
-    const team1Id = "assets/team-tokens/snowflake-green.svg";
+    const team1Id = "1";
     const team1Positions: readonly TeamLocation[] = [
       { row: 0, column: 1 },
       { row: 0, column: 2 },
@@ -29,10 +29,10 @@ export class BackendService {
     ];
     const gameStartState: GameStartState = {
       id: "game id",
-      board: await this.getBoardJson("board1"),
+      board: await this.getBoard("board1"),
       teams: [
-        { id: team1Id, location: team1Positions[0] },
-        { id: "assets/team-tokens/stars.svg", location: { row: 3, column: 4 } }
+        { id: team1Id, token: "assets/team-tokens/snowflake-green.svg", location: team1Positions[0] },
+        { id: "2", token: "assets/team-tokens/stars.svg", location: { row: 3, column: 4 } }
       ]
     };
 
@@ -48,10 +48,18 @@ export class BackendService {
     ).subscribe(tme => this._teamMove$.next(tme));
     //await new Promise(resolve => setTimeout(() => resolve(1), 5000));
   }
-  private async getBoardJson(token: string): Promise<Board> {
+  private async getBoard(token: string): Promise<Board> {
     return await firstValueFrom(this.httpClient.get<Board>(`assets/boards/${token}.json`));
   }
+  private async getUser(): Promise<User> {
+    return await firstValueFrom(this.httpClient.get<User>(`assets/mock/$user.json`));
+  }
 
+}
+
+export interface User {
+  readonly id: string;
+  readonly teamId: string;
 }
 
 export interface GameStartState {
@@ -62,6 +70,7 @@ export interface GameStartState {
 
 interface Team {
   readonly id: string;
+  readonly token: string;
   readonly location: TeamLocation;
 }
 
