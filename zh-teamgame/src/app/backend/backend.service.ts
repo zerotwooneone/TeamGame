@@ -7,19 +7,25 @@ import { BackendModule } from './backend.module';
   providedIn: BackendModule
 })
 export class BackendService {
-  private _starting$: Subject<GameStartState>;
+  private readonly _starting$: Subject<GameStartState>;
   get starting$(): Observable<GameStartState> { return this._starting$.asObservable(); }
-  private _teamMove$: Subject<TeamMoveEvent>;
+  private readonly _teamMove$: Subject<TeamMoveEvent>;
   get teamMove$(): Observable<TeamMoveEvent> { return this._teamMove$.asObservable(); }
+  private readonly _user$: Subject<UserDetails>;
+  get user$(): Observable<UserDetails> { return this._user$.asObservable(); }
   constructor(
     readonly httpClient: HttpClient,
   ) {
     this._starting$ = new Subject<GameStartState>();
     this._teamMove$ = new Subject<TeamMoveEvent>();
+    this._user$ = new Subject<UserDetails>();
   }
 
   /**this is a placeholder that represents the backend pushing out a new game to us */
   public async bootStrapStart(): Promise<void> {
+    const user = await this.getUser();
+    this._user$.next(user);
+
     const team1Id = "1";
     const team1Positions: readonly TeamLocation[] = [
       { row: 0, column: 1 },
@@ -51,13 +57,13 @@ export class BackendService {
   private async getBoard(token: string): Promise<Board> {
     return await firstValueFrom(this.httpClient.get<Board>(`assets/boards/${token}.json`));
   }
-  private async getUser(): Promise<User> {
-    return await firstValueFrom(this.httpClient.get<User>(`assets/mock/$user.json`));
+  private async getUser(): Promise<UserDetails> {
+    return await firstValueFrom(this.httpClient.get<UserDetails>(`assets/mock/user.json`));
   }
 
 }
 
-export interface User {
+export interface UserDetails {
   readonly id: string;
   readonly teamId: string;
 }
