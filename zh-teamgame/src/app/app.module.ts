@@ -11,13 +11,15 @@ import { BusModule } from './bus/bus.module';
 import { SpaceContentComponent } from './space-content/space-content.component';
 import { DomainModule } from './domain/domain.module';
 import { BackendModule } from './backend/backend.module';
+import { TeamInputComponent } from './team-input/team-input.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoardComponent,
     SpaceComponent,
-    SpaceContentComponent
+    SpaceContentComponent,
+    TeamInputComponent
   ],
   imports: [
     BusModule,

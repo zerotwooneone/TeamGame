@@ -1,0 +1,5 @@
+<p *ngIf="user">
+    <span class="user-name">{{user.id}}</span> you are on team <span *ngIf="!teamToken"
+        class="team-name">{{user.teamId}}</span><span class="team-token"><img *ngIf="teamToken" [src]="teamToken"
+            class="team-token" /></span>
+</p>

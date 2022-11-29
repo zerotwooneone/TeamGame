@@ -9,6 +9,9 @@ export class Game {
     get gameState(): ObservableProperty<gameState> {
         return this._gameState.property;
     }
+    get teams(): { readonly [id: string]: Team } {
+        return this._teams;
+    }
     constructor(
         readonly id: string,
         readonly board: Board,

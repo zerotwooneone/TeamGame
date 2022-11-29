@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendService, GameStartState, TeamMoveEvent } from './backend/backend.service';
+import { BackendService, GameStartState, TeamMoveEvent, UserDetails } from './backend/backend.service';
 import { GameService } from './domain/game/game.service';
 import { DisposableCollection } from './domain/model/Disposable';
 import { Game } from './domain/game/game';
@@ -12,6 +12,7 @@ import { Game } from './domain/game/game';
 export class AppComponent implements OnInit {
   title = 'zh-teamgame';
   game?: Game;
+  user?: UserDetails;
   private readonly _disposableCollection: DisposableCollection;
   constructor(
     readonly gameService: GameService,
@@ -23,6 +24,10 @@ export class AppComponent implements OnInit {
     this._disposableCollection.pushSubscription(
       this.backend.starting$
         .subscribe(s => this.OnStarting(s))
+    );
+    this._disposableCollection.pushSubscription(
+      this.backend.user$
+        .subscribe(s => this.OnUser(s))
     );
 
     this._disposableCollection.pushSubscription(
@@ -49,6 +54,10 @@ export class AppComponent implements OnInit {
       return;
     }
     this.gameService.handleMove(this.game.id, event);
+  }
+
+  private OnUser(user: UserDetails) {
+    this.user = user;
   }
 
 }
