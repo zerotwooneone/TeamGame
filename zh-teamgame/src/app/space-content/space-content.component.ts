@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { dynamic } from '../domain/model/dynamic';
 
 @Component({
   selector: 'zh-space-content',
@@ -11,9 +10,9 @@ export class SpaceContentComponent {
   public teamTokenUrl: string | null = null;
 
   @Input()
-  row: number = -1;
+  row?: number = -1;
   @Input()
-  column: number = -1;
+  column?: number = -1;
 
   @Input()
   set contentConfig(config: ContentConfig | null) {

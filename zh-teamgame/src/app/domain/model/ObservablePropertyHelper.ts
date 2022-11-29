@@ -8,7 +8,10 @@ export class NullableObservablePropertyHelper<T> implements Disposable {
     private readonly _subject: Subject<T | null>;
     constructor(value?: T | null, subject?: Subject<T | null>) {
         this._subject = subject ?? new Subject<T | null>();
+
+        //we cannot use .bind(this) here
         this.next = v => { this._subject.next(v); };
+
         this.property = new NullableObservableProperty(this._subject);
         if (typeof value !== "undefined") {
             this.next(value);
@@ -31,7 +34,9 @@ export class NullableObservableProperty<T> implements Disposable {
     constructor(subject: Subject<T | null>) {
         this._subject = subject;
         this.observable$ = this._subject.asObservable();
-        this._subscription = this.observable$.subscribe(v => this._nullable = new ValueNullable(v));
+        this._subscription = this.observable$.subscribe(v => {
+            this._nullable = new ValueNullable(v);
+        });
     }
     Dispose(): void {
         this._subscription.unsubscribe();
@@ -43,7 +48,10 @@ export class ObservablePropertyHelper<T> implements Disposable {
     private readonly _subject: Subject<T>;
     constructor(value?: T, subject?: Subject<T>) {
         this._subject = subject ?? new Subject<T>();
+
+        //we cannot use .bind(this) here
         this.next = v => { this._subject.next(v); };
+
         this.property = new ObservableProperty(this._subject);
         if (typeof value !== "undefined") {
             this.next(value);

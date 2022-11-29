@@ -24,7 +24,7 @@ export class GameRepositoryService {
     this._game = game;
     return Promise.resolve();
   }
-  get(): Game | undefined {
+  get(id: string): Game | undefined {
     return this._game;
   }
 }

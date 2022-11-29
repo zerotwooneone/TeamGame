@@ -1,10 +1,7 @@
 import { Component, HostBinding, Input, OnDestroy } from '@angular/core';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { AppBusService } from '../appbus/appbus.service';
-import { SubjectToken } from '../bus/SubjectToken';
+import { DisposableCollection } from '../domain/model/Disposable';
+import { Space } from '../domain/space/space';
 import { ContentConfig } from '../space-content/space-content.component';
-import { SpaceConfig } from './SpaceConfig';
-import { SpaceNotification } from './SpaceNotification';
 
 @Component({
   selector: 'zh-space',
@@ -13,70 +10,33 @@ import { SpaceNotification } from './SpaceNotification';
 })
 export class SpaceComponent implements OnDestroy {
 
-  get rowIndex(): number {
-    return this._spaceConfig.rowIndex;
-  }
-  get columnIndex(): number {
-    return this._spaceConfig.columnIndex;
-  }
   @HostBinding('class.impassible')
   get impassible(): boolean {
-    return !this._spaceConfig.passable;
+    return !this._space?.passible ?? false;
   }
-  private _spaceConfig: SpaceConfig = SpaceComponent.DefaultSpaceConfig;
+  private _space?: Space;
   @Input()
-  set spaceConfig(val: SpaceConfig) {
-    this._spaceConfig = val;
-    if (typeof this._spaceConfig.columnIndex !== "number" ||
-      typeof this._spaceConfig.rowIndex !== "number") {
-      console.warn("non-numeric row or column index. skipping subscribe");
-      return;
-    }
-    if (this.notificationSubscription) {
-      this.notificationSubscription.unsubscribe();
-    }
-    const notificationToken = new SubjectToken<SpaceNotification>(SpaceComponent.GetNotificationTopicName(this._spaceConfig.rowIndex, this._spaceConfig.columnIndex), "SpaceNotification");
-    this.notificationSubscription = this.bus.subscribeParam(notificationToken, this.OnNotification.bind(this));
+  set space(val: Space) {
+    this._space = val;
+    this._disposables.empty();
+    this._disposables.pushSubscription(
+      this._space.teamId$.observable$.subscribe(tid => {
+        this.OnTeamIdChange(tid);
+      })
+    );
   }
-  private notificationSubscription?: Subscription;
-  private static readonly DefaultSpaceConfig: SpaceConfig = {
-    neighbors: {
-      N: {},
-      NE: {},
-      NW: {},
-
-      E: {},
-      W: {},
-
-      S: {},
-      SE: {},
-      SW: {},
-    },
-    contents: [],
-    columnIndex: 9999,
-    rowIndex: 9999,
-  }
-  readonly contentConfigSubject: Subject<ContentConfig>;
-  readonly contentConfig$: Observable<ContentConfig>;
-  constructor(readonly bus: AppBusService) {
-    this.spaceConfig = SpaceComponent.DefaultSpaceConfig;
-    this.contentConfigSubject = new Subject<ContentConfig>();
-    this.contentConfig$ = this.contentConfigSubject.asObservable();
+  private readonly _disposables: DisposableCollection;
+  contentConfig: ContentConfig;
+  constructor() {
+    this._disposables = new DisposableCollection();
+    this.contentConfig = {};    
   }
   ngOnDestroy(): void {
-    if (this.notificationSubscription) {
-      this.notificationSubscription.unsubscribe();
-    }
+    this._disposables.Dispose();
   }
-  private OnNotification(notification: SpaceNotification): void {
-    if (notification.teamToken) {
-      //todo: this is a hack we are using the url as the team id
-      this.contentConfigSubject.next({ teamTokenUrl: notification.teamToken.id });
-    }
-  }
-  /**This is a hack to allow direct calls to each space. We shouldn't use the bus for direct UI access like this */
-  public static GetNotificationTopicName(rowIndex: number, columnIndex: number): string {
-    return `r:${rowIndex} c:${columnIndex}`
+  private OnTeamIdChange(teamId: string | null): void {
+    //todo: this is a hack we are using the url as the team id
+    this.contentConfig = { teamTokenUrl: teamId };
   }
 }
 

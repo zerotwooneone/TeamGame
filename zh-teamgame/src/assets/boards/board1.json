@@ -1,10 +1,10 @@
 {
     "rows":[
-        [{"impassible": true},    {}, {}, {}, {"impassible": true}],
+        [{"impassible": true},    {"teamId": "assets/team-tokens/snowflake-green.svg"}, {}, {}, {"impassible": true}],
         [{"impassible": true},    {"impassible": true}, {}, {"impassible": true}, {"impassible": true}],
         [{},    {}, {}, {}, {}],
         [{},    {}, {}, {}, {}],
-        [{},    {}, {}, {}, {}]
+        [{},    {"teamId":"assets/team-tokens/stars.svg"}, {}, {}, {}]
     ],
     "spaceSize": 100
 }

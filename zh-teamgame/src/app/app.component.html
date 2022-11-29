@@ -1,5 +1,5 @@
 <div role="main">
-  <zh-board [boardConfig]="boardConfig"></zh-board>
+  <zh-board *ngIf="game" [game]="game"></zh-board>
 </div>
 
 <router-outlet></router-outlet>

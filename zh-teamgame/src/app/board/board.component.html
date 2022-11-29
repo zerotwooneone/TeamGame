@@ -2,6 +2,6 @@
 <div *ngIf="isConfigured">
     <div class="container" [style.grid-template-columns]="columnDefinitions"
         [style.grid-template-rows]="rowDefinitions">
-        <zh-space *ngFor="let space of spaces" [spaceConfig]="space"></zh-space>
+        <zh-space *ngFor="let space of spaces;" [space]="space"></zh-space>
     </div>
 </div>

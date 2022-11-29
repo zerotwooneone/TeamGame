@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { finalize, Observable, share, Subject, Subscription } from 'rxjs';
 import { BareSubjectToken } from './BareSubjectToken';
+import { BusModule } from './bus.module';
 import { SubjectToken } from './SubjectToken';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: BusModule
 })
 export class BusService {
   private readonly _topics: { [topicName: string]: Topic } = {};
