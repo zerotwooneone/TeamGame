@@ -12,6 +12,9 @@ export class Team {
         location: TeamLocation): Team {
         return new Team(id, location);
     }
+    public move(location: TeamLocation) {
+        this._location = location;
+    }
 }
 
 

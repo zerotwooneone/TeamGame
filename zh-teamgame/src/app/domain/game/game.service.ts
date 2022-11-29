@@ -7,6 +7,7 @@ import { DomainModule } from '../domain.module';
 import { DisposableCollection } from '../model/Disposable';
 import { ObservableProperty, ObservablePropertyHelper } from '../model/ObservablePropertyHelper';
 import { TeamConfig } from '../team/TeamConfig';
+import { TeamLocation } from '../team/TeamLocation';
 import { Game } from './game';
 import { GameRepositoryService } from './game-repository.service';
 import { gameState } from './gameState';
@@ -22,7 +23,7 @@ export class GameService {
     readonly bus: BusService) {
     this._gameDisposables = new DisposableCollection();
   }
-  async start(state: { readonly id: string, readonly board: BoardLayout, readonly teams: readonly TeamConfig[] }): Promise<void> {
+  start(state: { readonly id: string, readonly board: BoardLayout, readonly teams: readonly TeamConfig[] }): void {
     const game = this.gameRepo.create(
       state.id,
       state.board,
@@ -37,5 +38,20 @@ export class GameService {
   public getById(id: string): Game | undefined {
     return this.gameRepo.get(id);
   }
+  public handleMove(gameId: string, event: TeamMoveEvent): void {
+    const game = this.getById(gameId);
+    if (!game) {
+      console.error("cannot move when game is not found");
+      return;
+    }
+    game.handleMove(event);
+  }
+}
+
+export interface TeamMoveEvent {
+  readonly teams: readonly {
+    readonly id: string,
+    readonly location: TeamLocation
+  }[];
 }
 
