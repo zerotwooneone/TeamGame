@@ -3,6 +3,7 @@ import { BoardLayout } from '../board/BoardLayout';
 import { BusService } from '../bus/bus.service';
 import { DomainModule } from '../domain.module';
 import { DisposableCollection } from '../model/Disposable';
+import { RoundConfig } from '../round/RoundConfig';
 import { TeamConfig } from '../team/TeamConfig';
 import { TeamLocation } from '../team/TeamLocation';
 import { Game } from './game';
@@ -19,11 +20,12 @@ export class GameService {
     readonly bus: BusService) {
     this._gameDisposables = new DisposableCollection();
   }
-  start(state: { readonly id: string, readonly board: BoardLayout, readonly teams: readonly TeamConfig[] }): void {
+  start(state: gameStartParam): void {
     const game = this.gameRepo.create(
       state.id,
       state.board,
-      state.teams);
+      state.teams,
+      state.round);
     this.gameRepo.put(game);
     //this.bus.publishParam(Topics.GameCreated, game.id);
 
@@ -42,6 +44,13 @@ export class GameService {
     }
     game.handleMove(event);
   }
+}
+
+interface gameStartParam {
+  readonly id: string;
+  readonly board: BoardLayout;
+  readonly teams: readonly TeamConfig[]
+  readonly round: RoundConfig
 }
 
 export interface TeamMoveEvent {

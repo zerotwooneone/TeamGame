@@ -12,6 +12,7 @@ import { SpaceContentComponent } from './space-content/space-content.component';
 import { DomainModule } from './domain/domain.module';
 import { BackendModule } from './backend/backend.module';
 import { TeamInputComponent } from './team-input/team-input.component';
+import { DevUtilComponent } from './dev-util/dev-util.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { TeamInputComponent } from './team-input/team-input.component';
     BoardComponent,
     SpaceComponent,
     SpaceContentComponent,
-    TeamInputComponent
+    TeamInputComponent,
+    DevUtilComponent
   ],
   imports: [
     BusModule,

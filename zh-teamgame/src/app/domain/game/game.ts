@@ -1,5 +1,7 @@
+import { BehaviorSubject } from "rxjs";
 import { Board } from "../board/board";
 import { ObservableProperty, ObservablePropertyHelper } from "../model/ObservablePropertyHelper";
+import { Round } from "../round/round";
 import { Team } from "../team/team";
 import { TeamMoveEvent } from "./game.service";
 import { gameState } from "./gameState";
@@ -12,10 +14,14 @@ export class Game {
     get teams(): { readonly [id: string]: Team } {
         return this._teams;
     }
+    get round(): ObservableProperty<Round> {
+        return this._round.property;
+    }
     constructor(
         readonly id: string,
         readonly board: Board,
-        private readonly _teams: teamLookup) { }
+        private readonly _teams: teamLookup,
+        private readonly _round: ObservablePropertyHelper<Round>) { }
 
     public start(): void {
         if (!this.gameState.assignable.hasBeenSet || (this.gameState.assignable.value > gameState.preStart)) {
@@ -28,7 +34,8 @@ export class Game {
     public static Factory(
         id: string,
         board: Board,
-        teams: readonly Team[]
+        teams: readonly Team[],
+        round: Round
     ): Game {
         const teamLookup = teams.reduce((dict, team) => {
             dict[team.id] = team;
@@ -37,7 +44,11 @@ export class Game {
         return new Game(
             id,
             board,
-            teamLookup
+            teamLookup,
+            new ObservablePropertyHelper<Round>(
+                round,
+                new BehaviorSubject<Round>(round)
+            )
         )
     }
     public handleMove(event: TeamMoveEvent) {

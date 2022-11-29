@@ -33,13 +33,19 @@ export class BackendService {
       { row: 1, column: 2 },
       { row: 0, column: 2 }
     ];
+    const roundMinutes = 5;
     const gameStartState: GameStartState = {
       id: "game id",
       board: await this.getBoard("board1"),
       teams: [
         { id: team1Id, token: "assets/team-tokens/snowflake-green.svg", location: team1Positions[0] },
         { id: "2", token: "assets/team-tokens/stars.svg", location: { row: 3, column: 4 } }
-      ]
+      ],
+      round: {
+        id: 1,
+        end: new Date((new Date().getTime()) + roundMinutes * 60000),
+        maxActions: 5
+      }
     };
 
 
@@ -60,6 +66,15 @@ export class BackendService {
   private async getUser(): Promise<UserDetails> {
     return await firstValueFrom(this.httpClient.get<UserDetails>(`assets/mock/user.json`));
   }
+  startNewRound() {
+    throw new Error('Method not implemented.');
+
+    /*Round.Factory(
+      1,
+      new Date((new Date().getTime()) + roundMinutes * 60000),
+      5
+    )*/
+  }
 
 }
 
@@ -72,6 +87,7 @@ export interface GameStartState {
   readonly id: string;
   readonly board: Board;
   readonly teams: readonly Team[];
+  readonly round: Round;
 }
 
 interface Team {
@@ -100,4 +116,10 @@ export interface TeamMoveEvent {
     readonly id: string,
     readonly location: TeamLocation
   }[];
+}
+
+export interface Round {
+  readonly id: number;
+  readonly end: Date;
+  readonly maxActions: number;
 }
