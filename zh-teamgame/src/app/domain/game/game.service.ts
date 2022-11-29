@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
-import { filter, take } from 'rxjs';
 import { BoardLayout } from '../board/BoardLayout';
 import { BusService } from '../bus/bus.service';
-import { Topics } from '../bus/topics';
 import { DomainModule } from '../domain.module';
 import { DisposableCollection } from '../model/Disposable';
-import { ObservableProperty, ObservablePropertyHelper } from '../model/ObservablePropertyHelper';
 import { TeamConfig } from '../team/TeamConfig';
 import { TeamLocation } from '../team/TeamLocation';
 import { Game } from './game';
 import { GameRepositoryService } from './game-repository.service';
-import { gameState } from './gameState';
 
 @Injectable({
   providedIn: DomainModule

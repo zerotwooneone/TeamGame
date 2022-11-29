@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { switchMap } from 'rxjs';
 import { BackendService, GameStartState, TeamMoveEvent } from './backend/backend.service';
 import { GameService } from './domain/game/game.service';
 import { DisposableCollection } from './domain/model/Disposable';

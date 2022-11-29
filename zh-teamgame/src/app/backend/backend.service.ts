@@ -40,7 +40,6 @@ export class BackendService {
     this._starting$.next(gameStartState);
     const s = of("s").pipe(
       delay(1000),
-      //take(1),
       switchMap(_ => interval(1000)),
       map(n => team1Positions[n % team1Positions.length]),
       map(l => {
