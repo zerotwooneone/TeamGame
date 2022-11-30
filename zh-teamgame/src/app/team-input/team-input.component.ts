@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Game } from '../domain/game/game';
 import { RoundContext } from '../domain/round/round-context';
+import { Team } from '../domain/team/team';
 import { User } from '../domain/user/user';
 
 @Component({
@@ -18,21 +19,17 @@ export class TeamInputComponent {
   @Input()
   roundContext?: RoundContext | null;
 
-  get teamToken(): string | null {
+  get team(): Team | null {
     if (!this.user || !this.game) {
       return null;
     }
-    return this.game.teams[this.user.teamId].token;
+    return this.game.teams[this.user.teamId];
+  }
+  get teamToken(): string | undefined {
+    return this.team?.token;
   }
   get location(): Location | undefined {
-    if (!this.game) {
-      return undefined;
-    }
-    if (!this.user) {
-      return undefined;
-    }
-    const team = this.game.teams[this.user.teamId];
-    return team.location;
+    return this.team?.location;
   }
   get canAddAction(): boolean {
     return !!this.roundContext &&
