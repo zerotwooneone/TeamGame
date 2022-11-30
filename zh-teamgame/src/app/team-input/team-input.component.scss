@@ -1,3 +1,23 @@
 .team-token {
     height: 1em;
 }
+.movement-arrow {
+    display: block;
+    max-width: 2em;
+
+    &.right {
+        rotate: 90deg;
+    }
+
+    &.left {
+        rotate: -90deg;
+    }
+
+    &.down {
+        rotate: 180deg;
+    }
+}
+
+.movement-container {
+    background-color: lightseagreen;
+}

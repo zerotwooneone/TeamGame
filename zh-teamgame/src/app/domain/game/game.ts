@@ -63,6 +63,9 @@ export class Game {
             this.board.moveTeam({ id: newTeam.id, token: team.token }, oldLocation, newTeam.location);
         }
     }
+    public newRound(round: Round) {
+        this._round.next(round);
+    }
 }
 
 type teamLookup = { [id: string]: Team };

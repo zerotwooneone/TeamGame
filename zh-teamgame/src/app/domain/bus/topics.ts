@@ -2,5 +2,6 @@ import { BareSubjectToken } from "src/app/bus/BareSubjectToken";
 import { SubjectToken } from "src/app/bus/SubjectToken";
 
 export class Topics {
-    //static readonly GameCreated: SubjectToken<string> = new SubjectToken<string>("GameCreated", "string");
+    /**Provides the id of the game whose round updated */
+    static readonly NewRound: SubjectToken<string> = new SubjectToken<string>("NewRound", "string");
 }

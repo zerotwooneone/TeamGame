@@ -3,3 +3,17 @@
         class="team-name">{{user.teamId}}</span><span class="team-token"><img *ngIf="teamToken" [src]="teamToken"
             class="team-token" /></span>
 </p>
+<div class="movement-container">
+    <button mat-raised-button color="primary" [disabled]="!canMoveUp">
+        <img class="movement-arrow up" src="../../assets/token-movement/arrow.white.up.svg" />
+    </button>
+    <button mat-raised-button color="primary" [disabled]="!canMoveRight">
+        <img class="movement-arrow right" src="../../assets/token-movement/arrow.white.up.svg" />
+    </button>
+    <button mat-raised-button color="primary" [disabled]="!canMoveDown">
+        <img class="movement-arrow down" src="../../assets/token-movement/arrow.white.up.svg" />
+    </button>
+    <button mat-raised-button color="primary" [disabled]="!canMoveLeft">
+        <img class="movement-arrow left" src="../../assets/token-movement/arrow.white.up.svg" />
+    </button>
+</div>

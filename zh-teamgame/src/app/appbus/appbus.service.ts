@@ -9,7 +9,7 @@ import { SubjectToken } from '../bus/SubjectToken';
 })
 export class AppBusService {
 
-  constructor(readonly bus: BusService) { }
+  constructor(private readonly bus: BusService) { }
 
   public publish(token: BareSubjectToken): void {
     this.bus.publish(token);

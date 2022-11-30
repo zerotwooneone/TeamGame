@@ -13,6 +13,7 @@ import { DomainModule } from './domain/domain.module';
 import { BackendModule } from './backend/backend.module';
 import { TeamInputComponent } from './team-input/team-input.component';
 import { DevUtilComponent } from './dev-util/dev-util.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { DevUtilComponent } from './dev-util/dev-util.component';
   ],
   imports: [
     BusModule,
+    MatButtonModule,
     DomainModule,
     BackendModule,
     BrowserModule,

@@ -10,7 +10,7 @@ import { BusService as CommonBus } from '../../bus/bus.service';
 })
 export class BusService {
 
-  constructor(readonly bus: CommonBus) { }
+  constructor(private readonly bus: CommonBus) { }
 
   public publish(token: BareSubjectToken): void {
     this.bus.publish(token);

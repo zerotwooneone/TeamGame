@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BoardLayout } from '../board/BoardLayout';
 import { BusService } from '../bus/bus.service';
+import { Topics } from '../bus/topics';
 import { DomainModule } from '../domain.module';
 import { DisposableCollection } from '../model/Disposable';
+import { Round } from '../round/round';
 import { RoundConfig } from '../round/RoundConfig';
 import { TeamConfig } from '../team/TeamConfig';
 import { TeamLocation } from '../team/TeamLocation';
@@ -13,7 +15,6 @@ import { GameRepositoryService } from './game-repository.service';
   providedIn: DomainModule
 })
 export class GameService {
-
   private readonly _gameDisposables: DisposableCollection;
   constructor(
     readonly gameRepo: GameRepositoryService,
@@ -43,6 +44,36 @@ export class GameService {
       return;
     }
     game.handleMove(event);
+  }
+
+  public onRoundEnd(gameId: string) {
+    const game = this.getById(gameId);
+    if (!game) {
+      console.error("cannot end round. game was not found");
+      return;
+    }
+    if (!game.round.assignable.hasBeenSet) {
+      console.error("cannot end round. round is not set");
+      return;
+    }
+    game.round.assignable.value.endRound();
+  }
+
+  public onNewRound(
+    gameId: string,
+    config: RoundConfig): void {
+    const game = this.getById(gameId);
+    if (!game) {
+      console.error("cannot start new round. game was not found");
+      return;
+    }
+    const round = Round.Factory(
+      config.id,
+      config.end,
+      config.maxActions
+    );
+    game.newRound(round);
+    this.bus.publishParam(Topics.NewRound, game.id);
   }
 }
 
