@@ -93,10 +93,10 @@ export class ActionSequence {
     }
 }
 
-type moveDirection = "N" | "NE" | "NW" | "E" | "W" | "S" | "SE" | "SW";
+export type ActionDirection = "N" | "NE" | "NW" | "E" | "W" | "S" | "SE" | "SW";
 export type Action = {
     pickup?: undefined;
-    move: moveDirection
+    move: ActionDirection
 } | {
     pickup: true
     move?: undefined;

@@ -13,6 +13,8 @@ export class BackendService {
   get starting$(): Observable<GameStartState> { return this._starting$.asObservable(); }
   private readonly _teamMove$: Subject<TeamMoveEvent>;
   get teamMove$(): Observable<TeamMoveEvent> { return this._teamMove$.asObservable(); }
+  private readonly _teamUpdate$: Subject<TeamUpdate>;
+  get teamUpdate$(): Observable<TeamUpdate> { return this._teamUpdate$.asObservable(); }
   private readonly _user$: Subject<UserDetails>;
   get user$(): Observable<UserDetails> { return this._user$.asObservable(); }
   get round$(): Observable<Round> { return this._round$.asObservable(); }
@@ -22,6 +24,7 @@ export class BackendService {
   ) {
     this._starting$ = new Subject<GameStartState>();
     this._teamMove$ = new Subject<TeamMoveEvent>();
+    this._teamUpdate$ = new Subject<TeamUpdate>();
     this._user$ = new Subject<UserDetails>();
     this._roundEnd$ = new Subject<void>();
     this._round$ = new Subject<Round>();
@@ -93,12 +96,12 @@ export class BackendService {
     });
   }
 
-  moveTeam(teamId: string, location: TeamLocation) {
-    this._teamMove$.next({
-      teams: [{
-        id: teamId,
-        location: location
-      }]
+  updateActions(teamId: string, actions: readonly ActionDescription[], timeStamp?: number) {
+    const tsParam = timeStamp ?? (new Date().getTime());
+    this._teamUpdate$.next({
+      id: teamId,
+      timeStamp: tsParam,
+      actions: actions
     });
   }
 
@@ -126,6 +129,22 @@ interface TeamLocation {
   readonly row: number;
   readonly column: number;
 }
+
+export interface TeamUpdate {
+  readonly id: string;
+  readonly actions: readonly ActionDescription[];
+  readonly timeStamp: number;
+}
+
+export type ActionDescription = {
+  move: ActionDirection;
+  pickup?: undefined;
+} | {
+  move?: undefined;
+  pickup: true;
+}
+
+type ActionDirection = "N" | "NE" | "NW" | "E" | "W" | "S" | "SE" | "SW";
 
 export interface Board {
   readonly rows: readonly ColumnArray[];

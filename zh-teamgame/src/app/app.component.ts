@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendService, GameStartState, Round, TeamMoveEvent, UserDetails } from './backend/backend.service';
+import { BackendService, GameStartState, Round, TeamMoveEvent, TeamUpdate, UserDetails } from './backend/backend.service';
 import { GameService } from './domain/game/game.service';
 import { DisposableCollection } from './domain/model/Disposable';
 import { Game } from './domain/game/game';
@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   title = 'zh-teamgame';
   game?: Game;
   user?: User;
-  roundContext$?: Observable<RoundContext>;
+  roundContext?: RoundContext;
   private readonly _disposableCollection: DisposableCollection;
   constructor(
     readonly gameService: GameService,
@@ -32,7 +32,9 @@ export class AppComponent implements OnInit {
     this._disposableCollection.push(
       this.roundContextService.BeginListening()
     );
-    this.roundContext$ = this.roundContextService.roundContext$;
+    this._disposableCollection.pushSubscription(
+      this.roundContextService.roundContext$.subscribe(r => this.roundContext = r)
+    );
 
     this._disposableCollection.pushSubscription(
       this.backend.starting$
@@ -46,6 +48,10 @@ export class AppComponent implements OnInit {
     this._disposableCollection.pushSubscription(
       this.backend.teamMove$
         .subscribe(s => this.OnMove(s))
+    );
+    this._disposableCollection.pushSubscription(
+      this.backend.teamUpdate$
+        .subscribe(s => this.OnTeamUpdate(s))
     );
 
     this._disposableCollection.pushSubscription(
@@ -86,6 +92,17 @@ export class AppComponent implements OnInit {
       return;
     }
     this.gameService.handleMove(this.game.id, event);
+  }
+  private OnTeamUpdate(s: TeamUpdate): void {
+    if (!this.roundContext) {
+      console.error('cannot update team when there is no round context');
+      return;
+    }
+    if (!this.roundContext.actions.assignable.hasBeenSet) {
+      console.error('cannot update team when actions has not been set');
+      return;
+    }
+    this.roundContext.actions.assignable.value.update(s.actions, s.timeStamp);
   }
 
   private OnUser(user: UserDetails) {

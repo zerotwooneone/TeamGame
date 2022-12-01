@@ -12,10 +12,13 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <div>
-        <button (click)="moveSelectedUp()">|^|</button>
-        <button (click)="moveSelectedLeft()">&lt;-</button>
-        <button (click)="moveSelectedRight()">-></button>
-        <button (click)="moveSelectedDown()">|v|</button>
-    </div>
+</div>
+<div>
+    <h2>Remote teammate actions</h2>
+    Actions:
+    <button (click)="moveTeamUp()">|^|</button>
+    <button (click)="moveTeamLeft()">&lt;-</button>
+    <button (click)="moveTeamRight()">-></button>
+    <button (click)="moveTeamDown()">|v|</button>
+    <button (click)="pickup()">Pickup!</button>
 </div>

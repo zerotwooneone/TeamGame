@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { Game } from '../domain/game/game';
+import { Action, ActionDirection } from '../domain/round/action-sequence';
+import { RoundContext } from '../domain/round/round-context';
 import { Team } from '../domain/team/team';
 
 @Component({
@@ -11,6 +13,8 @@ import { Team } from '../domain/team/team';
 export class DevUtilComponent {
   @Input()
   game?: Game;
+  @Input()
+  roundContext?: RoundContext | null;
   selectedTeam?: string;
 
   get teamNames(): readonly string[] {
@@ -23,39 +27,68 @@ export class DevUtilComponent {
   onEndRound(): void {
     this.backend.endRound();
   }
-  public moveSelectedUp(): void {
-    const check = this.moveTeamCheck();
-    if (check.abortMove) {
+  public moveTeamUp(): void {
+    const check = this.teamActionCheck();
+    if (check.abortAction) {
       return;
     }
-    this.backend.moveTeam(check.team.id, { row: check.team.location.row - 1, column: check.team.location.column });
+    const newActions = this.appendMove(check.actions, "N");
+    this.backend.updateActions(check.team.id, newActions);
   }
-  public moveSelectedDown(): void {
-    const check = this.moveTeamCheck();
-    if (check.abortMove) {
+  private appendMove(actions: Action[], direction: ActionDirection): Action[] {
+    actions.push({
+      move: direction
+    });
+    return actions;
+  }
+
+  public moveTeamDown(): void {
+    const check = this.teamActionCheck();
+    if (check.abortAction) {
       return;
     }
-    this.backend.moveTeam(check.team.id, { row: check.team.location.row + 1, column: check.team.location.column });
+    const newActions = this.appendMove(check.actions, "S");
+    this.backend.updateActions(check.team.id, newActions);
   }
-  public moveSelectedLeft(): void {
-    const check = this.moveTeamCheck();
-    if (check.abortMove) {
+  public moveTeamLeft(): void {
+    const check = this.teamActionCheck();
+    if (check.abortAction) {
       return;
     }
-    this.backend.moveTeam(check.team.id, { row: check.team.location.row, column: check.team.location.column - 1 });
+    const newActions = this.appendMove(check.actions, "W");
+    this.backend.updateActions(check.team.id, newActions);
   }
-  public moveSelectedRight(): void {
-    const check = this.moveTeamCheck();
-    if (check.abortMove) {
+  public moveTeamRight(): void {
+    const check = this.teamActionCheck();
+    if (check.abortAction) {
       return;
     }
-    this.backend.moveTeam(check.team.id, { row: check.team.location.row, column: check.team.location.column + 1 });
+    const newActions = this.appendMove(check.actions, "E");
+    this.backend.updateActions(check.team.id, newActions);
   }
-  private moveTeamCheck(): { abortMove: true, team?: undefined } | { abortMove?: false, team: Team } {
+  public pickup(): void {
+    const check = this.teamActionCheck();
+    if (check.abortAction) {
+      return;
+    }
+    const newActions = check.actions;
+    newActions.push({
+      pickup: true
+    });
+    this.backend.updateActions(check.team.id, newActions);
+  }
+  private teamActionCheck(): { abortAction: true, team?: undefined, round?: undefined, actions?: undefined } | { abortAction?: false, team: Team, round: RoundContext, actions: Action[] } {
     if (!this.selectedTeam ||
-      !this.game) {
-      return { abortMove: true };
+      !this.game ||
+      !this.roundContext ||
+      !this.roundContext.actions.assignable.hasBeenSet ||
+      !this.roundContext.actions.assignable.value.actions.assignable.hasBeenSet) {
+      return { abortAction: true };
     }
-    return { team: this.game.teams[this.selectedTeam] };
+    return {
+      team: this.game.teams[this.selectedTeam],
+      round: this.roundContext,
+      actions: this.roundContext.actions.assignable.value.actions.assignable.value.map(i => i)
+    };
   }
 }
