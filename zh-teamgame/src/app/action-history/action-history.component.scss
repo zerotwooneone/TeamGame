@@ -4,11 +4,12 @@
 }
 
 .action-container {
-    background-color: aqua;
+    background-color: darkblue;
     display: flex;
     flex-direction: column;
-    max-width: 2em;
     margin: 5px;
+    max-width: 2em;
+    max-height: 3em;
 
     .action-icon {
         &.right {

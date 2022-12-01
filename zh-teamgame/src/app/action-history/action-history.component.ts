@@ -25,7 +25,6 @@ export class ActionHistoryComponent {
     );
   }
   getMoveClass(move: ActionDirection): string | undefined {
-    console.warn(move);
     switch (move) {
       case 'N': return "up";
       case 'E': return "right";

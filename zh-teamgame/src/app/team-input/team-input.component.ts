@@ -31,7 +31,7 @@ export class TeamInputComponent {
   get location(): Location | undefined {
     return this.team?.location;
   }
-  get canAddAction(): boolean {
+  private get canAddAction(): boolean {
     return !!this.roundContext &&
       this.roundContext.actions.canAddAction();
   }
@@ -41,21 +41,44 @@ export class TeamInputComponent {
       !this.game.round.assignable.value.hasEnded.assignable.hasBeenSet ||
       this.game.round.assignable.value.hasEnded.assignable.value;
   }
-  get canMoveUp(): boolean {
-    return !!this.location &&
-      this.canAddAction;
+  get actionDisabled(): boolean {
+    return !this.location ||
+      !this.canAddAction;
   }
-  get canMoveDown(): boolean {
-    return !!this.location &&
-      this.canAddAction;
+  public moveUp(): void {
+    if (this.actionDisabled ||
+      !this.roundContext) {
+      return;
+    }
+    this.roundContext.actions.addAction({ move: "N" })
   }
-  get canMoveLeft(): boolean {
-    return !!this.location &&
-      this.canAddAction;
+  public moveDown(): void {
+    if (this.actionDisabled ||
+      !this.roundContext) {
+      return;
+    }
+    this.roundContext.actions.addAction({ move: "S" })
   }
-  get canMoveRight(): boolean {
-    return !!this.location &&
-      this.canAddAction;
+  public moveLeft(): void {
+    if (this.actionDisabled ||
+      !this.roundContext) {
+      return;
+    }
+    this.roundContext.actions.addAction({ move: "W" })
+  }
+  public moveRight(): void {
+    if (this.actionDisabled ||
+      !this.roundContext) {
+      return;
+    }
+    this.roundContext.actions.addAction({ move: "E" })
+  }
+  public pickup(): void {
+    if (this.actionDisabled ||
+      !this.roundContext) {
+      return;
+    }
+    this.roundContext.actions.addAction({ pickup: true })
   }
 }
 

@@ -1,10 +1,12 @@
 .team-token {
     height: 1em;
 }
-.movement-arrow {
-    display: block;
+.movement-arrow,
+.pickup {
     max-width: 2em;
-
+    max-height: 2.5em;
+}
+.movement-arrow {
     &.right {
         rotate: 90deg;
     }

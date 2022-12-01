@@ -4,16 +4,19 @@
             class="team-token" /></span>
 </p>
 <div class="movement-container">
-    <button mat-raised-button color="primary" [disabled]="!canMoveUp">
+    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveUp()">
         <img class="movement-arrow up" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="!canMoveRight">
+    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveRight()">
         <img class="movement-arrow right" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="!canMoveDown">
+    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveDown()">
         <img class="movement-arrow down" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="!canMoveLeft">
+    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveLeft()">
         <img class="movement-arrow left" src="../../assets/token-movement/arrow.white.up.svg" />
+    </button>
+    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="pickup()">
+        <img class="pickup" src="../../assets/token-movement/pickup.white.svg" />
     </button>
 </div>
