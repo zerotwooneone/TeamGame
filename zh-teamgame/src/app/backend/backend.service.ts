@@ -39,8 +39,8 @@ export class BackendService {
       id: "game id",
       board: await this.getBoard("board1"),
       teams: [
-        { id: "1", token: "assets/team-tokens/snowflake-green.svg", location: { row: 0, column: 1 } },
-        { id: "2", token: "assets/team-tokens/stars.svg", location: { row: 3, column: 4 } }
+        { id: "1", token: "assets/team-tokens/hexagon.white.svg", location: { row: 0, column: 1 } },
+        { id: "2", token: "assets/team-tokens/star.white.svg", location: { row: 3, column: 4 } }
       ],
       round: {
         id: this.nextRoundId++,
