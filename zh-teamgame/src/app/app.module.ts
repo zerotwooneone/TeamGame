@@ -16,6 +16,7 @@ import { DevUtilComponent } from './dev-util/dev-util.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { ActionHistoryComponent } from './action-history/action-history.component';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ActionHistoryComponent } from './action-history/action-history.componen
     BusModule,
     MatButtonModule,
     MatSelectModule,
+    MatBadgeModule,
     DomainModule,
     BackendModule,
     BrowserModule,

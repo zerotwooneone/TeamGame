@@ -1,5 +1,6 @@
 <h2>Actions for this round:</h2>
-<div class="action-container" *ngFor="let action of actions$ | async; let i = index">
+<div class="action-container" *ngFor="let action of actions$ | async; let i = index" [matBadge]="i+1"
+    matBadgeColor="accent">
     <img *ngIf="action.action != 'pickup'" class="action-icon" [class]="action.class"
         src="../../assets/token-movement/arrow.white.up.svg" />
     <img *ngIf="action.action == 'pickup'" class="action-icon" src="../../assets/token-movement/pickup.white.svg" />
