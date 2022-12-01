@@ -1,7 +1,7 @@
 <p *ngIf="user">
     <span class="user-name">{{user.id}}</span> you are on team <span *ngIf="!teamToken"
         class="team-name">{{user.teamId}}</span><span class="team-token"><img *ngIf="teamToken" [src]="teamToken"
-            class="team-token" /></span>
+            style="filter: brightness(0) saturate(100%) invert(22%) sepia(84%) saturate(7444%) hue-rotate(357deg) brightness(115%) contrast(124%);" class="team-token" /></span>
 </p>
 <div class="movement-container">
     <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveUp()">
