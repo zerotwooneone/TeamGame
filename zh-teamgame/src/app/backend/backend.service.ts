@@ -93,6 +93,15 @@ export class BackendService {
     });
   }
 
+  moveTeam(teamId: string, location: TeamLocation) {
+    this._teamMove$.next({
+      teams: [{
+        id: teamId,
+        location: location
+      }]
+    });
+  }
+
 }
 
 export interface UserDetails {

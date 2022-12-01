@@ -1,3 +1,21 @@
 <p>dev-util works!</p>
-<input type="button" value="start new round" (click)="onStartRound()" />
-<input type="button" value="end round" (click)="onEndRound()" />
+<div>
+    <input type="button" value="start new round" (click)="onStartRound()" />
+    <input type="button" value="end round" (click)="onEndRound()" />
+</div>
+<div class="team-move">
+    <mat-form-field appearance="fill">
+        <mat-label>Selected team</mat-label>
+        <mat-select [(value)]="selectedTeam">
+            <mat-option *ngFor="let team of teamNames" [value]="team">
+                {{team}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <div>
+        <button (click)="moveSelectedUp()">|^|</button>
+        <button (click)="moveSelectedLeft()">&lt;-</button>
+        <button (click)="moveSelectedRight()">-></button>
+        <button (click)="moveSelectedDown()">|v|</button>
+    </div>
+</div>

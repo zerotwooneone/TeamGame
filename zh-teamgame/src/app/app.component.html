@@ -1,7 +1,7 @@
 <div role="main">
   <zh-board *ngIf="game" [game]="game"></zh-board>
   <zh-team-input [user]="user" [game]="game" [roundContext]="roundContext$ | async"></zh-team-input>
-  <zh-dev-util></zh-dev-util>
+  <zh-dev-util [game]="game"></zh-dev-util>
 </div>
 
 <router-outlet></router-outlet>

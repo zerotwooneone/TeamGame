@@ -14,6 +14,7 @@ import { BackendModule } from './backend/backend.module';
 import { TeamInputComponent } from './team-input/team-input.component';
 import { DevUtilComponent } from './dev-util/dev-util.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     BusModule,
     MatButtonModule,
+    MatSelectModule,
     DomainModule,
     BackendModule,
     BrowserModule,
