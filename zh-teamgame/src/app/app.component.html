@@ -1,7 +1,12 @@
 <div role="main">
-  <zh-board *ngIf="game" [game]="game"></zh-board>
-  <zh-team-input [user]="user" [game]="game" [roundContext]="roundContext"></zh-team-input>
-  <zh-dev-util [game]="game"></zh-dev-util>
+  <div class="play-container">
+    <zh-board *ngIf="game" [game]="game"></zh-board>
+    <div class="team-container">
+      <zh-action-history [roundContext]="roundContext"></zh-action-history>
+      <zh-team-input [user]="user" [game]="game" [roundContext]="roundContext"></zh-team-input>
+    </div>
+    </div>
+    <zh-dev-util [user]="user" [game]="game" [roundContext]="roundContext"></zh-dev-util>
 </div>
 
 <router-outlet></router-outlet>

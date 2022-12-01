@@ -98,11 +98,7 @@ export class AppComponent implements OnInit {
       console.error('cannot update team when there is no round context');
       return;
     }
-    if (!this.roundContext.actions.assignable.hasBeenSet) {
-      console.error('cannot update team when actions has not been set');
-      return;
-    }
-    this.roundContext.actions.assignable.value.update(s.actions, s.timeStamp);
+    this.roundContext.actions.update(s.actions, s.timeStamp);
   }
 
   private OnUser(user: UserDetails) {

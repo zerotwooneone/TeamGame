@@ -1,0 +1,7 @@
+<h2>Actions for this round:</h2>
+<div class="action-container" *ngFor="let action of actions$ | async; let i = index">
+    <img *ngIf="action.action != 'pickup'" class="action-icon" [class]="action.class"
+        src="../../assets/token-movement/arrow.white.up.svg" />
+    <div *ngIf="action.action == 'pickup'">pickup</div>
+</div>
+<button mat-raised-button color="primary">Submit Actions</button>

@@ -15,6 +15,7 @@ import { TeamInputComponent } from './team-input/team-input.component';
 import { DevUtilComponent } from './dev-util/dev-util.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { ActionHistoryComponent } from './action-history/action-history.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { MatSelectModule } from '@angular/material/select';
     SpaceComponent,
     SpaceContentComponent,
     TeamInputComponent,
-    DevUtilComponent
+    DevUtilComponent,
+    ActionHistoryComponent
   ],
   imports: [
     BusModule,

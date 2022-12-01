@@ -1,15 +1,10 @@
-import { BehaviorSubject, filter, take } from "rxjs";
-import { ObservableProperty, ObservablePropertyHelper } from "../model/ObservablePropertyHelper";
 import { Action, ActionSequence } from "./action-sequence";
 import { Round } from "./round";
 
 export class RoundContext {
-    get actions(): ObservableProperty<ActionSequence> {
-        return this._actions.property;
-    }
     constructor(
         readonly round: Round,
-        private readonly _actions: ObservablePropertyHelper<ActionSequence>) { }
+        readonly actions: ActionSequence) { }
     public static Factory(
         round: Round,
         lastTimeStamp: number,
@@ -22,10 +17,7 @@ export class RoundContext {
         );
         return new RoundContext(
             round,
-            new ObservablePropertyHelper<ActionSequence>(
-                actionsParam,
-                new BehaviorSubject<ActionSequence>(actionsParam)
-            )
+            actionsParam
         );
     }
 }

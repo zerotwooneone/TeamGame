@@ -4,6 +4,7 @@ import { Game } from '../domain/game/game';
 import { Action, ActionDirection } from '../domain/round/action-sequence';
 import { RoundContext } from '../domain/round/round-context';
 import { Team } from '../domain/team/team';
+import { User } from '../domain/user/user';
 
 @Component({
   selector: 'zh-dev-util',
@@ -13,6 +14,8 @@ import { Team } from '../domain/team/team';
 export class DevUtilComponent {
   @Input()
   game?: Game;
+  @Input()
+  user?: User;
   @Input()
   roundContext?: RoundContext | null;
   selectedTeam?: string;
@@ -78,17 +81,17 @@ export class DevUtilComponent {
     this.backend.updateActions(check.team.id, newActions);
   }
   private teamActionCheck(): { abortAction: true, team?: undefined, round?: undefined, actions?: undefined } | { abortAction?: false, team: Team, round: RoundContext, actions: Action[] } {
-    if (!this.selectedTeam ||
+    if (
       !this.game ||
       !this.roundContext ||
-      !this.roundContext.actions.assignable.hasBeenSet ||
-      !this.roundContext.actions.assignable.value.actions.assignable.hasBeenSet) {
+      !this.roundContext.actions.actions.assignable.hasBeenSet ||
+      !this.user) {
       return { abortAction: true };
     }
     return {
-      team: this.game.teams[this.selectedTeam],
+      team: this.game.teams[this.user.teamId],
       round: this.roundContext,
-      actions: this.roundContext.actions.assignable.value.actions.assignable.value.map(i => i)
+      actions: this.roundContext.actions.actions.assignable.value.map(i => i)
     };
   }
 }

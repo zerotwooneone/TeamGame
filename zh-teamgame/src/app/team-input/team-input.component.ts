@@ -33,8 +33,7 @@ export class TeamInputComponent {
   }
   get canAddAction(): boolean {
     return !!this.roundContext &&
-      this.roundContext.actions.assignable.hasBeenSet &&
-      this.roundContext.actions.assignable.value.canAddAction();
+      this.roundContext.actions.canAddAction();
   }
   get roundEnded(): boolean {
     return !this.game ||

@@ -1,0 +1,26 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+.action-container {
+    background-color: aqua;
+    display: flex;
+    flex-direction: column;
+    max-width: 2em;
+    margin: 5px;
+
+    .action-icon {
+        &.right {
+            rotate: 90deg;
+        }
+
+        &.left {
+            rotate: -90deg;
+        }
+
+        &.down {
+            rotate: 180deg;
+        }
+    }
+}
