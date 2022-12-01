@@ -63,7 +63,7 @@ export class BackendService {
   private async getUser(): Promise<UserDetails> {
     return await firstValueFrom(this.httpClient.get<UserDetails>(`assets/mock/user.json`));
   }
-  async startNewRound(): Promise<void> {
+  endRound(): void {
     this._roundEnd$.next();
 
     //simulate team movement
@@ -74,7 +74,7 @@ export class BackendService {
       { row: 1, column: 2 },
       { row: 0, column: 2 }
     ];
-    const s = await lastValueFrom(of("s").pipe(
+    lastValueFrom(of("s").pipe(
       delay(1000),
       switchMap(_ => interval(1000)),
       map(n => team1Positions[n % team1Positions.length]),
@@ -84,7 +84,8 @@ export class BackendService {
       take(9),
       tap(tme => this._teamMove$.next(tme))
     ));
-
+  }
+  startNewRound(): void {
     this._round$.next({
       id: this.nextRoundId++,
       end: this.getRoundEnd(),

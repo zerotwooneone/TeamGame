@@ -8,7 +8,10 @@ import { BackendService } from '../backend/backend.service';
 })
 export class DevUtilComponent {
   constructor(readonly backend: BackendService) { }
-  async onStartRound(): Promise<void> {
+  onStartRound(): void {
     this.backend.startNewRound();
+  }
+  onEndRound(): void {
+    this.backend.endRound();
   }
 }
