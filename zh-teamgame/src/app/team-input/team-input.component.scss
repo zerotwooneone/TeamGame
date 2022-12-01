@@ -20,4 +20,7 @@
 
 .movement-container {
     background-color: lightseagreen;
+    &>button {
+            margin: 10px;
+        }
 }
