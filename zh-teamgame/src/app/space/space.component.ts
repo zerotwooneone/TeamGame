@@ -1,6 +1,7 @@
 import { Component, HostBinding, Input, OnDestroy } from '@angular/core';
 import { DisposableCollection } from '../domain/model/Disposable';
 import { Space } from '../domain/space/space';
+import { Team } from '../domain/team/team';
 import { ContentConfig } from '../space-content/space-content.component';
 
 @Component({
@@ -9,9 +10,9 @@ import { ContentConfig } from '../space-content/space-content.component';
   styleUrls: ['./space.component.scss']
 })
 export class SpaceComponent implements OnDestroy {
-  private _teamId: string | null = null;
-  get teamId(): string | null {
-    return this._teamId;
+  private _team: Team | null = null;
+  get team(): Team | null {
+    return this._team;
   }
 
   @HostBinding('class.impassible')
@@ -25,10 +26,7 @@ export class SpaceComponent implements OnDestroy {
     this._disposables.empty();
     this._disposables.pushSubscription(
       this._space.team$.observable$.subscribe(tid => {
-        const { id, token } = tid && tid.id && tid.token
-          ? { id: tid.id, token: tid.token }
-          : { id: null, token: null };
-        this.OnTeamChange(id, token);
+        this.OnTeamChange(tid);
       })
     );
   }
@@ -41,11 +39,12 @@ export class SpaceComponent implements OnDestroy {
   ngOnDestroy(): void {
     this._disposables.Dispose();
   }
-  private OnTeamChange(
-    teamId: string | null,
-    teamToken: string | null): void {
-    this._teamId = teamId;
-    this.contentConfig = { teamTokenUrl: teamToken };
+  private OnTeamChange(team: Team | null): void {
+    this._team = team;
+    const teamParam = !!team ?
+      { shape: team.token.shape, color: team.token.color }
+      : undefined;
+    this.contentConfig = { team: teamParam };
   }
 }
 

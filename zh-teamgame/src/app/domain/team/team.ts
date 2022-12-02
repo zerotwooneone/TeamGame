@@ -1,21 +1,13 @@
-import { TeamLocation } from "./TeamLocation";
+import { TeamToken } from "./team-token";
 
 export class Team {
-    get location(): TeamLocation {
-        return this._location;
-    }
     constructor(
         readonly id: string,
-        private _location: TeamLocation,
-        readonly token: string) { }
+        readonly token: TeamToken) { }
     public static Factory(
         id: string,
-        location: TeamLocation,
-        token: string): Team {
-        return new Team(id, location, token);
-    }
-    public move(location: TeamLocation) {
-        this._location = location;
+        token: TeamToken): Team {
+        return new Team(id, token);
     }
 }
 

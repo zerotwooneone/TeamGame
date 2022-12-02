@@ -58,9 +58,8 @@ export class Game {
                 console.error(`cannot move team that does not exist id:${newTeam.id}`);
                 continue;
             }
-            const oldLocation = team.location;
-            team.move(newTeam.location);
-            this.board.moveTeam({ id: newTeam.id, token: team.token }, oldLocation, newTeam.location);
+            team.token.move(newTeam.location);
+            this.board.moveTeam({ id: newTeam.id, token: team.token }, newTeam.location);
         }
     }
     public newRound(round: Round) {

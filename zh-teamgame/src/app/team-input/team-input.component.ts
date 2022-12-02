@@ -25,11 +25,11 @@ export class TeamInputComponent {
     }
     return this.game.teams[this.user.teamId];
   }
-  get teamToken(): string | undefined {
-    return this.team?.token;
+  get teamShape(): string | undefined {
+    return this.team?.token.shape;
   }
   get location(): Location | undefined {
-    return this.team?.location;
+    return this.team?.token.location;
   }
   private get canAddAction(): boolean {
     return !!this.roundContext &&

@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { ActionHistoryComponent } from './action-history/action-history.component';
 import { MatBadgeModule } from '@angular/material/badge';
+import { TeamTokenComponent } from './team-token/team-token.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { MatBadgeModule } from '@angular/material/badge';
     SpaceContentComponent,
     TeamInputComponent,
     DevUtilComponent,
-    ActionHistoryComponent
+    ActionHistoryComponent,
+    TeamTokenComponent
   ],
   imports: [
     BusModule,

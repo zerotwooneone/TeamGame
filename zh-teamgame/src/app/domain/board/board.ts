@@ -1,4 +1,5 @@
-import { Space, SpaceTeam } from "../space/space";
+import { Space } from "../space/space";
+import { Team } from "../team/team";
 import { TeamLocation } from "../team/TeamLocation";
 import { BoardLayout, ColumnArray, SpaceDetails } from "./BoardLayout";
 
@@ -12,7 +13,7 @@ export class Board {
         readonly columnDefinition: string) { }
     public static Factory(
         layout: BoardLayout,
-        teamTokenLookup: teamTokenLookup): Board {
+        teamTokenLookup: TeamLookup): Board {
         const columnCount = layout.rows.reduce((prevMax, column) => {
             if (column.length > prevMax) {
                 return column.length;
@@ -34,20 +35,17 @@ export class Board {
     }
     private static GetRows(
         rows: readonly ColumnArray[],
-        teamTokenLookup: teamTokenLookup): RowCollection {
+        teamLookup: TeamLookup): RowCollection {
         const handleSpaces = (s: SpaceDetails) => {
-            if (s.teamId && !teamTokenLookup[s.teamId]) {
+            if (s.teamId && !teamLookup[s.teamId]) {
                 console.error(`couldn't find team token for id:${s.teamId}`);
             }
-            const token = s.teamId
-                ? teamTokenLookup[s.teamId]
-                : null;
-            const teamParam = (s.teamId && token)
-                ? { id: s.teamId, token: token }
+            const team = s.teamId
+                ? teamLookup[s.teamId]
                 : null;
             return Space.Factory(
                 !s.impassible,
-                teamParam);
+                team);
         }
         return rows.map(r => r.map(handleSpaces));
     }
@@ -58,13 +56,12 @@ export class Board {
             .map(_ => pixelSize)
             .reduce((prev, curr) => `${prev} ${curr}`);
     }
-    public moveTeam(team: SpaceTeam,
-        oldLocation: TeamLocation,
+    public moveTeam(team: Team,
         newLocation: TeamLocation) {
-        this.removeTeam(oldLocation);
+        this.removeTeam(team.token.location);
         this.addTeam(team, newLocation);
     }
-    private addTeam(team: SpaceTeam, location: TeamLocation) {
+    private addTeam(team: Team, location: TeamLocation) {
         const space = this.rows[location.row][location.column];
         space.addTeam(team);
     }
@@ -78,7 +75,7 @@ export class Board {
     }
 }
 
-type teamTokenLookup = { readonly [id: string]: string }
+type TeamLookup = Readonly<{ readonly [id: string]: Team }>;
 
 export type RowCollection = readonly Row[];
 export type Row = readonly Space[];

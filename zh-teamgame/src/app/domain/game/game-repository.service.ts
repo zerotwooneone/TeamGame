@@ -5,6 +5,7 @@ import { DomainModule } from '../domain.module';
 import { Round } from '../round/round';
 import { RoundConfig } from '../round/RoundConfig';
 import { Team } from '../team/team';
+import { TeamToken } from '../team/team-token';
 import { TeamConfig } from '../team/TeamConfig';
 import { Game } from './game';
 
@@ -18,16 +19,16 @@ export class GameRepositoryService {
     boardLayout: BoardLayout,
     teams: readonly TeamConfig[],
     round: RoundConfig): Game {
-    const teamTokenLookup = teams.reduce((dict, team) => {
-      dict[team.id] = team.token;
-      return dict;
-    }, {} as { [id: string]: string });
 
-    const roundMinutes = 5;
+    const teamsParam = teams.map(c => Team.Factory(c.id, TeamToken.Factory(c.token.shape, c.token.color, c.token.location)));
+    const teamLookup = teamsParam.reduce((dict, team) => {
+      dict[team.id] = team;
+      return dict;
+    }, {} as { [id: string]: Team });
     return Game.Factory(
       id,
-      Board.Factory(boardLayout, teamTokenLookup),
-      teams.map(c => Team.Factory(c.id, c.location, c.token)),
+      Board.Factory(boardLayout, teamLookup),
+      teamsParam,
       Round.Factory(
         round.id,
         round.end,

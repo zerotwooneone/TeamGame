@@ -1,2 +1,1 @@
-<img style="filter: brightness(0) saturate(100%) invert(22%) sepia(84%) saturate(7444%) hue-rotate(357deg) brightness(115%) contrast(124%);"
-    *ngIf="teamTokenUrl" [src]="teamTokenUrl" class="team-token" />
+<img [ngStyle]="{'filter':teamTokenFilter}" *ngIf="teamTokenSource" [src]="teamTokenSource" class="team-token" />
