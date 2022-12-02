@@ -28,6 +28,9 @@ export class TeamInputComponent {
   get teamShape(): string | undefined {
     return this.team?.token.shape;
   }
+  get teamTokenFilter(): string | undefined {
+    return this.team?.token.color;
+  }
   get location(): Location | undefined {
     return this.team?.token.location;
   }
