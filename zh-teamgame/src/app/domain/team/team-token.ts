@@ -1,10 +1,10 @@
 import { Color, ColorFilter } from "../model/color";
 import { Pickup } from "../pickup/pickup";
-import { TeamLocation } from "./TeamLocation";
-import { TeamShapes, TeamShapeSource } from "./TeamShape";
+import { BoardLocationConfig } from "../space/BoardLocation";
+import { CommonShapes, ShapePath } from "../model/CommonShape";
 
 export class TeamToken {
-    get location(): TeamLocation {
+    get location(): BoardLocationConfig {
         return this._location;
     }
     get heldPickup(): Pickup | undefined {
@@ -17,18 +17,18 @@ export class TeamToken {
         return !!this.heldPickup;
     }
     constructor(
-        readonly shape: TeamShapeSource,
+        readonly shape: ShapePath,
         readonly color: ColorFilter,
-        private _location: TeamLocation,
+        private _location: BoardLocationConfig,
         private _pickup?: Pickup
     ) { }
     public static Factory(
         shape: string,
         color: string,
-        teamLocation: TeamLocation,
+        teamLocation: BoardLocationConfig,
         pickup?: Pickup
     ): TeamToken {
-        const teamShape = TeamShapes.toTeamShapeSource(shape);
+        const teamShape = CommonShapes.toShapePath(shape);
         if (!teamShape) {
             throw new Error(`invalid team shape:${shape}`);
         }
@@ -43,7 +43,7 @@ export class TeamToken {
             pickup
         );
     }
-    public move(location: TeamLocation) {
+    public move(location: BoardLocationConfig) {
         this._location = location;
     }
     public pickup(pickup: Pickup): void {

@@ -1,10 +1,11 @@
-import { TeamLocation } from "./TeamLocation";
+import { BoardLocationConfig } from "../space/BoardLocation";
 
 export interface TeamConfig {
     readonly id: string;
     readonly token: {
-        readonly location: TeamLocation;
+        readonly location: BoardLocationConfig;
         readonly shape: string;
         readonly color: string;
+        readonly pickupId?: string;
     }
 }

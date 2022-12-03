@@ -7,9 +7,10 @@ import { DisposableCollection } from '../model/Disposable';
 import { Round } from '../round/round';
 import { RoundConfig } from '../round/RoundConfig';
 import { TeamConfig } from '../team/TeamConfig';
-import { TeamLocation } from '../team/TeamLocation';
+import { BoardLocationConfig } from '../space/BoardLocation';
 import { Game } from './game';
 import { GameRepositoryService } from './game-repository.service';
+import { PickupConfig } from '../pickup/PickupConfig';
 
 @Injectable({
   providedIn: DomainModule
@@ -26,7 +27,8 @@ export class GameService {
       state.id,
       state.board,
       state.teams,
-      state.round);
+      state.round,
+      state.pickups);
     this.gameRepo.put(game);
     //this.bus.publishParam(Topics.GameCreated, game.id);
 
@@ -80,14 +82,15 @@ export class GameService {
 interface gameStartParam {
   readonly id: string;
   readonly board: BoardLayout;
-  readonly teams: readonly TeamConfig[]
-  readonly round: RoundConfig
+  readonly teams: readonly TeamConfig[];
+  readonly round: RoundConfig;
+  readonly pickups: readonly PickupConfig[];
 }
 
 export interface TeamMoveEvent {
   readonly teams: readonly {
     readonly id: string,
-    readonly location: TeamLocation
+    readonly location: BoardLocationConfig
   }[];
 }
 

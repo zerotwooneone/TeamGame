@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { ColorFilter } from '../domain/model/color';
-import { TeamShapeSource } from '../domain/team/TeamShape';
+import { ShapePath } from '../domain/model/CommonShape';
 
 @Component({
   selector: 'zh-space-content',
@@ -37,5 +37,5 @@ export class SpaceContentComponent {
 }
 
 export interface ContentConfig {
-  team?: { readonly shape: TeamShapeSource, readonly color: ColorFilter } | null;
+  team?: { readonly shape: ShapePath, readonly color: ColorFilter } | null;
 }

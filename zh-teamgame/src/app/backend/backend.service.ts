@@ -62,7 +62,7 @@ export class BackendService {
       },
       pickups: [
         { id: "pickup1", color: "Red", shape: "Square", location: { row: 2, column: 1 }, classes: ["Red", "Square"] },
-        { id: "pickup2", color: "Aqua", shape: "Sprial", location: { row: 0, column: 1 }, classes: ["Aqua", "Sprial"] },
+        { id: "pickup2", color: "Aqua", shape: "Spiral", location: { row: 0, column: 1 }, classes: ["Aqua", "Spiral"] },
         { id: "pickup3", color: "Magenta", shape: "Triangle", location: { row: 3, column: 4 }, classes: ["Magenta", "Triangle"] },
       ]
     };

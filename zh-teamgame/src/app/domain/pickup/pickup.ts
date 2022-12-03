@@ -1,7 +1,7 @@
 import { BehaviorSubject } from "rxjs";
 import { Color, ColorFilter } from "../model/color";
 import { ObservableProperty, ObservablePropertyHelper } from "../model/ObservablePropertyHelper";
-import { PickupShapes, PickupShapeSource } from "./PickupShape";
+import { CommonShapes, ShapePath } from "../model/CommonShape";
 
 export class Pickup {
     get classes(): readonly string[] {
@@ -20,7 +20,7 @@ export class Pickup {
     }
     constructor(
         readonly id: string,
-        readonly shape: PickupShapeSource,
+        readonly shape: ShapePath,
         readonly color: ColorFilter,
         private readonly _classes: string[],
         private readonly _isHeld$: ObservablePropertyHelper<boolean>) { }
@@ -28,9 +28,9 @@ export class Pickup {
         id: string,
         shape: string,
         color: string,
-        classes: string[] = [],
+        classes: readonly string[] = [],
         isHeld: boolean = true): Pickup {
-        const pickupShape = PickupShapes.toPickupShapeSource(shape);
+        const pickupShape = CommonShapes.toShapePath(shape);
         if (!pickupShape) {
             throw new Error(`invalid team shape:${shape}`);
         }
@@ -42,7 +42,7 @@ export class Pickup {
             id,
             pickupShape,
             pickupColor,
-            classes,
+            classes.map(i => i),
             new ObservablePropertyHelper<boolean>(
                 isHeld,
                 new BehaviorSubject(isHeld)
@@ -65,3 +65,5 @@ export class Pickup {
     }
 
 }
+
+
