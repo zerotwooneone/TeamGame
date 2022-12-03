@@ -39,19 +39,34 @@ export class BackendService {
       id: "game id",
       board: await this.getBoard("board1"),
       teams: [
-        { id: "1", token: { shape: "Hexagon", color: "Blue", location: { row: 0, column: 1 } } },
-        { id: "2", token: { shape: "Star", color: "Green", location: { row: 3, column: 4 } } }
+        {
+          id: "1", token: {
+            shape: "Hexagon",
+            color: "Blue",
+            location: { row: 0, column: 1 }
+          }
+        },
+        {
+          id: "2", token: {
+            shape: "Star",
+            color: "Green",
+            location: { row: 3, column: 4 },
+            pickupId: "pickup3"
+          }
+        }
       ],
       round: {
         id: this.nextRoundId++,
         end: this.getRoundEnd(),
         maxActions: this.roundActions
-      }
+      },
+      pickups: [
+        { id: "pickup1", color: "Red", shape: "Square", location: { row: 2, column: 1 }, classes: ["Red", "Square"] },
+        { id: "pickup2", color: "Aqua", shape: "Sprial", location: { row: 0, column: 1 }, classes: ["Aqua", "Sprial"] },
+        { id: "pickup3", color: "Magenta", shape: "Triangle", location: { row: 3, column: 4 }, classes: ["Magenta", "Triangle"] },
+      ]
     };
-
-
     this._starting$.next(gameStartState);
-
   }
   private nextRoundId = 1;
   private readonly roundActions = 5;
@@ -71,7 +86,7 @@ export class BackendService {
 
     //simulate team movement
     const team1Id = "1";
-    const team1Positions: readonly TeamLocation[] = [
+    const team1Positions: readonly BoardLocation[] = [
       { row: 0, column: 1 },
       { row: 0, column: 2 },
       { row: 1, column: 2 },
@@ -117,6 +132,15 @@ export interface GameStartState {
   readonly board: Board;
   readonly teams: readonly Team[];
   readonly round: Round;
+  readonly pickups: readonly PickupDesc[];
+}
+
+export interface PickupDesc {
+  readonly id: string;
+  readonly color: string;
+  readonly shape: string;
+  readonly classes: readonly string[];
+  readonly location: BoardLocation;
 }
 
 interface Team {
@@ -124,12 +148,13 @@ interface Team {
   readonly token: {
     readonly color: string;
     readonly shape: string;
-    readonly location: TeamLocation;
+    readonly location: BoardLocation;
+    readonly pickupId?: string;
   }
 
 }
 
-interface TeamLocation {
+interface BoardLocation {
   readonly row: number;
   readonly column: number;
 }
@@ -137,6 +162,7 @@ interface TeamLocation {
 export interface TeamUpdate {
   readonly id: string;
   readonly actions: readonly ActionDescription[];
+  readonly pickupId?: string;
   readonly timeStamp: number;
 }
 
@@ -163,7 +189,7 @@ interface Space {
 export interface TeamMoveEvent {
   readonly teams: readonly {
     readonly id: string,
-    readonly location: TeamLocation
+    readonly location: BoardLocation
   }[];
 }
 
