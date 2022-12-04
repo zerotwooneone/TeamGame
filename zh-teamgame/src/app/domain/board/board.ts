@@ -65,6 +65,7 @@ export class Board {
         newLocation: BoardLocationConfig) {
         this.removeTeam(team.token.location);
         this.addTeam(team, newLocation);
+        team.token.move(newLocation);
     }
     private addTeam(team: Team, location: BoardLocationConfig) {
         const space = this.rows[location.row][location.column];

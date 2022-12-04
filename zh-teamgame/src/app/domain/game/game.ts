@@ -69,7 +69,6 @@ export class Game {
                 console.error(`cannot move team that does not exist id:${newTeam.id}`);
                 continue;
             }
-            team.token.move(newTeam.location);
             this.board.moveTeam({ id: newTeam.id, token: team.token }, newTeam.location);
         }
     }
