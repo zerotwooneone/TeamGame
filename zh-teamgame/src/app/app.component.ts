@@ -7,7 +7,7 @@ import { UserService } from './domain/user/user.service';
 import { User } from './domain/user/user';
 import { RoundContextService } from './domain/round/round-context.service';
 import { RoundContext } from './domain/round/round-context';
-import { concatMap, Observable, Subject, switchMap } from 'rxjs';
+import { concatMap, filter, Observable, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ActionState } from './domain/round/action-sequence';
 
 @Component({
@@ -89,6 +89,23 @@ export class AppComponent implements OnInit {
   onRoundContext(context: RoundContext): void {
     this.roundContext = context;
     this.actionsUpdatedSubject.next(this.roundContext.actions.actions$.observable$);
+
+    //todo: clear subscriptions after rounds
+    this.roundContext.actions.submitted$.observable$.pipe(
+      takeUntil(this.roundContextService.roundContext$),
+      filter(b => b),
+      take(1),
+      concatMap(async _ => {
+        if (!this.roundContext) {
+          console.error("cannot submit because there is no round context")
+          return;
+        }
+        return this.OnSubmitted(this.roundContext.team.id);
+      })
+    ).subscribe();
+  }
+  async OnSubmitted(teamId: string): Promise<void> {
+    await this.backend.submit(teamId);
   }
 
   private OnStarting(state: GameStartState): void {

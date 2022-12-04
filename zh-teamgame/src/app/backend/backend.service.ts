@@ -127,7 +127,7 @@ export class BackendService {
     });
   }
 
-  /**this is a list of actions to playback when submit is clicked */
+  /**for mocking only:this is a list of actions to playback when submit is clicked */
   private endOfRoundActions: ActionStateDescription = {
     timeStamp: 0,
     actions: []
