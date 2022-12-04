@@ -22,6 +22,8 @@
 
 .movement-container {
     background-color: lightseagreen;
+    padding: 5px;
+        margin: 5px;
     display: grid;
         grid-template-areas:
             "north-west north-middle north-east"
@@ -49,9 +51,5 @@
             &.pickup {
                 grid-area: center-middle;
             }
-        }
-    
-        button {
-            margin: 10px;
-        }
+                }
 }
