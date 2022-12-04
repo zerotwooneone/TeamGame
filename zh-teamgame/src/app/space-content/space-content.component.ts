@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { ColorFilter } from '../domain/model/color';
-import { ShapePath } from '../domain/model/CommonShape';
+import { Pickup } from '../domain/pickup/pickup';
+import { Team } from '../domain/team/team';
 
 @Component({
   selector: 'zh-space-content',
@@ -10,32 +9,58 @@ import { ShapePath } from '../domain/model/CommonShape';
 })
 export class SpaceContentComponent {
 
-  public teamTokenSource: string | null = null;
-  public teamTokenFilter?: SafeStyle;
-
   @Input()
   row?: number = -1;
   @Input()
   column?: number = -1;
-
   @Input()
-  set contentConfig(config: ContentConfig | null) {
-    if (!config) {
-      return;
-    }
-    this.OnConfigChange(config);
-  }
-  constructor(readonly sanitizer: DomSanitizer) { }
-  private OnConfigChange(config: ContentConfig): void {
-    if (config.team) {
-      this.teamTokenSource = config.team.shape;
-      this.teamTokenFilter = config.team.color; //this.sanitizer.bypassSecurityTrustStyle(
-    } else {
-      this.teamTokenFilter = undefined;
-    }
-  }
-}
+  team: Team | null = null;
+  @Input()
+  pickup: Pickup | null = null;
 
-export interface ContentConfig {
-  team?: { readonly shape: ShapePath, readonly color: ColorFilter } | null;
+  get teamFilter(): string | undefined {
+    if (!this.team) {
+      return undefined;
+    }
+    return this.team.token.color;
+  }
+  get teamShape(): string | undefined {
+    if (!this.team) {
+      return undefined;
+    }
+    return this.team.token.shape;
+  }
+  get teamPickup(): Pickup | undefined {
+    if (!this.team) {
+      return undefined;
+    }
+    return this.team.token.heldPickup;
+  }
+  get teamPickupShape(): string | undefined {
+    if (!this.teamPickup) {
+      return undefined;
+    }
+    return this.teamPickup.shape;
+  }
+  get teamPickupFilter(): string | undefined {
+    if (!this.teamPickup) {
+      return undefined;
+    }
+    return this.teamPickup.color;
+  }
+
+  get pickupFilter(): string | undefined {
+    if (!this.pickup) {
+      return undefined;
+    }
+    return this.pickup.color;
+  }
+  get pickupShape(): string | undefined {
+    if (!this.pickup) {
+      return undefined;
+    }
+    return this.pickup.shape;
+  }
+
+
 }

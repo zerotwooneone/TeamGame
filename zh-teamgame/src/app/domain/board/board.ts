@@ -2,7 +2,7 @@ import { Space } from "../space/space";
 import { Team } from "../team/team";
 import { BoardLocationConfig } from "../space/BoardLocation";
 import { BoardLayout, ColumnArray, SpaceDetails } from "./BoardLayout";
-import { PickupByPickupId, TeamByTeamId } from "../game/game";
+import { Pickup } from "../pickup/pickup";
 
 export class Board {
     constructor(
@@ -14,8 +14,8 @@ export class Board {
         readonly columnDefinition: string) { }
     public static Factory(
         layout: BoardLayout,
-        teamTokenLookup: TeamLookup,
-        pickupLookup: PickupLookup): Board {
+        teamTokenLookup: Readonly<TeamByBoardLocation>,
+        pickupLookup: Readonly<PickupByBoardLocation>): Board {
         const columnCount = layout.rows.reduce((prevMax, column) => {
             if (column.length > prevMax) {
                 return column.length;
@@ -37,27 +37,22 @@ export class Board {
     }
     private static GetRows(
         rows: readonly ColumnArray[],
-        teamLookup: TeamLookup,
-        pickupLookup: PickupLookup): RowCollection {
-        const handleSpaces = (s: SpaceDetails) => {
-            if (!!s.teamId && !teamLookup[s.teamId]) {
-                console.error(`couldn't find team token for id:${s.teamId}`);
-            }
-            if (!!s.pickupId && !pickupLookup[s.pickupId]) {
-                console.error(`couldn't find pickup for id:${s.pickupId}`);
-            }
-            const team = s.teamId
-                ? teamLookup[s.teamId]
-                : null;
-            const pickup = s.pickupId
-                ? pickupLookup[s.pickupId]
-                : null;
+        teamLookup: Readonly<TeamByBoardLocation>,
+        pickupLookup: Readonly<PickupByBoardLocation>): RowCollection {
+        const handleSpaces = (
+            s: SpaceDetails,
+            rowIndex: number,
+            columnIndex: number) => {
+            const team = teamLookup[rowIndex]?.[columnIndex];
+            const pickup = pickupLookup[rowIndex]?.[columnIndex];
             return Space.Factory(
                 !s.impassible,
                 team,
                 pickup);
         }
-        return rows.map(r => r.map(handleSpaces));
+        return rows.map((row, rowIndex) =>
+            row.map((space, columnIndex) =>
+                handleSpaces(space, rowIndex, columnIndex)));
     }
     private static getGridDefinition(size: number, count: number): string {
         const pixelSize = `${size}px`;
@@ -85,8 +80,9 @@ export class Board {
     }
 }
 
-type TeamLookup = Readonly<TeamByTeamId>;
-type PickupLookup = Readonly<PickupByPickupId>;
+type boardLocationLookup<T> = { [rowIndex: number]: { [columnIndex: number]: T } };
+export type TeamByBoardLocation = boardLocationLookup<Team>;
+export type PickupByBoardLocation = boardLocationLookup<Pickup>;
 
 export type RowCollection = readonly Row[];
 export type Row = readonly Space[];

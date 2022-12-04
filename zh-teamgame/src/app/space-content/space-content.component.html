@@ -1,1 +1,10 @@
-<img [ngStyle]="{'filter':teamTokenFilter}" *ngIf="teamTokenSource" [src]="teamTokenSource" class="team-token" />
+<div class="pickup-container" *ngIf="pickup">
+    <img class="pickup-token" [ngStyle]="{'filter':pickupFilter}" [src]="pickupShape" />
+</div>
+<div *ngIf="team" class="team-container">
+    <img class="team-token" [ngStyle]="{'filter':teamFilter}" [src]="teamShape" />
+    <div class="pickup-container" *ngIf="teamPickup">
+        <img class="pickup-token" [ngStyle]="{'filter':teamPickupFilter}" [src]="teamPickupShape" />
+    </div>
+
+</div>

@@ -78,7 +78,7 @@ export class Game {
     }
 }
 
-export type TeamByTeamId = { [teamId: string]: Team };
-export type PickupByPickupId = { [pickupId: string]: Pickup };
+type TeamByTeamId = { [teamId: string]: Team };
+type PickupByPickupId = { [pickupId: string]: Pickup };
 
 
