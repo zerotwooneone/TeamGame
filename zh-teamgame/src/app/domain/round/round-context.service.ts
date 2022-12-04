@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { BusService } from '../bus/bus.service';
-import { Topics } from '../bus/topics';
+import { Observable, Subject } from 'rxjs';
 import { DomainModule } from '../domain.module';
-import { GameService } from '../game/game.service';
 import { Disposable, DisposableCollection } from '../model/Disposable';
 import { RoundContext } from './round-context';
+import { RoundContextRepositoryService } from './round-context-repository.service';
 
 @Injectable({
   providedIn: DomainModule
@@ -16,32 +14,30 @@ export class RoundContextService {
     return this._roundContext$.asObservable();
   }
   constructor(
-    private readonly bus: BusService,
-    private readonly gameService: GameService) {
+    private readonly contextRepository: RoundContextRepositoryService) {
     this._roundContext$ = new Subject<RoundContext>();
   }
-  public BeginListening(): Disposable {
+  public BeginListening(
+    gameId: string,
+    teamId: string,
+    round$: Observable<any>): Disposable {
     const disposable = new DisposableCollection();
     disposable.pushSubscription(
-      this.bus.subscribeParam(Topics.NewRound, g => this.OnNewRound(g))
+      round$.subscribe(_ => this.OnNewRound(gameId, teamId))
     )
 
     return disposable;
   }
-  public OnNewRound(gameId: string): void {
-    const game = this.gameService.getById(gameId);
-    if (!game) {
-      console.error("cannot start new round context. game was not found");
-      return;
-    }
-    if (!game.round.assignable.hasBeenSet) {
-      console.error("cannot start new round context. round was not set");
-      return;
-    }
-    const context = RoundContext.Factory(
-      game.round.assignable.value,
-      0
-    );
+  private OnNewRound(
+    gameId: string,
+    teamId: string) {
+    /*const oldContext = this.contextRepository.get();
+    if (oldContext) {
+      this.disposeContext(oldContext);
+    }*/
+    const context = this.contextRepository.create(gameId, teamId);
+    this.contextRepository.put(context);
+
     this._roundContext$.next(context);
   }
 }

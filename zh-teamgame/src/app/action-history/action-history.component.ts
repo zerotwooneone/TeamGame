@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { map, Observable, switchMap } from 'rxjs';
+import { debounceTime, map, Observable, Subject } from 'rxjs';
 import { ActionDirection } from '../domain/round/action-sequence';
 import { RoundContext } from '../domain/round/round-context';
 
@@ -10,19 +10,24 @@ import { RoundContext } from '../domain/round/round-context';
 })
 export class ActionHistoryComponent {
   @Input()
-  roundContext?: RoundContext;
-  get actions$(): Observable<{ action: (ActionDirection | "pickup"), class?: string }[]> | undefined {
-    if (!this.roundContext ||
-      !this.roundContext.actions.actions.assignable.hasBeenSet) {
-      return undefined;
+  set roundContext(value: RoundContext | undefined) {
+    if (!value ||
+      !value.actions.actions$.assignable.hasBeenSet) {
+      return;
     }
-    return this.roundContext.actions.actions.observable$.pipe(
-      map(actions => actions.map(a => {
+    const actionDebounceMs = 30;
+    this._actions$ = value.actions.actions$.observable$.pipe(
+      debounceTime(actionDebounceMs),
+      map(actions => actions.actions.map(a => {
         return !!a.move
           ? { action: a.move, class: this.getMoveClass(a.move) }
           : { action: "pickup" };
       }))
     );
+  }
+  private _actions$?: Observable<{ action: (ActionDirection | "pickup"), class?: string }[]>;
+  get actions$(): Observable<{ action: (ActionDirection | "pickup"), class?: string }[]> | undefined {
+    return this._actions$;
   }
   getMoveClass(move: ActionDirection): string | undefined {
     switch (move) {

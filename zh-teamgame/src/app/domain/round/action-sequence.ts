@@ -2,11 +2,11 @@ import { BehaviorSubject } from "rxjs";
 import { ObservableProperty, ObservablePropertyHelper } from "../model/ObservablePropertyHelper";
 
 export class ActionSequence {
-    get actions(): ObservableProperty<readonly Action[]> {
+    get actions$(): ObservableProperty<ActionState> {
         return this._actions.property;
     }
     constructor(
-        private readonly _actions: ObservablePropertyHelper<readonly Action[]>,
+        private readonly _actions: ObservablePropertyHelper<ActionState>,
         readonly maxActions: number,
         /**monotonically increasing value that represents how old the state is */
         private lastTimeStamp: number,
@@ -18,11 +18,14 @@ export class ActionSequence {
         lastTimeStamp: number,
         hasEnded: ObservableProperty<boolean>,
         actions?: readonly Action[]): ActionSequence {
-        const actionParam = actions ?? [];
+        const actionParam: ActionState = {
+            actions: actions ?? [],
+            timeStamp: lastTimeStamp
+        };
         return new ActionSequence(
-            new ObservablePropertyHelper<readonly Action[]>(
+            new ObservablePropertyHelper<ActionState>(
                 actionParam,
-                new BehaviorSubject<readonly Action[]>(actionParam)
+                new BehaviorSubject<ActionState>(actionParam)
             ),
             maxActions,
             lastTimeStamp,
@@ -31,8 +34,8 @@ export class ActionSequence {
     }
     public canAddAction(): boolean {
         return !this._submitted &&
-            (this.actions.assignable.hasBeenSet &&
-                this.actions.assignable.value.length < this.maxActions) &&
+            (this.actions$.assignable.hasBeenSet &&
+                this.actions$.assignable.value.actions.length < this.maxActions) &&
             (this.hasEnded.assignable.hasBeenSet &&
                 !this.hasEnded.assignable.value);
     }
@@ -40,32 +43,34 @@ export class ActionSequence {
         if (!this.canAddAction()) {
             throw new Error("cannot add action because max has been reached");
         }
-        if (!this.actions.assignable.hasBeenSet) {
+        if (!this.actions$.assignable.hasBeenSet) {
             throw new Error("cannot add action. actions has not been set yet");
         }
-        const newActions = this.actions.assignable.value.map(i => i);
+        const newActions = this.actions$.assignable.value.actions.map(i => i);
         newActions.push(action);
-        this._actions.next(newActions);
+        this._actions.next({
+            actions: newActions,
+            timeStamp: this.lastTimeStamp
+        });
     }
     /**replaces the current actions with the specified values if they are newer */
     public update(
-        actions: readonly Action[],
-        lastTimeStamp: number): void {
-        if (!this.actions.assignable.hasBeenSet) {
+        state: ActionState): void {
+        if (!this.actions$.assignable.hasBeenSet) {
             throw new Error("cannot update. actions has not been set yet");
         }
-        if (lastTimeStamp < this.lastTimeStamp) {
+        if (state.timeStamp < this.lastTimeStamp) {
             //we are getting an old update, ignore it
             return;
         }
-        this.lastTimeStamp = lastTimeStamp;
-        const actionsEqual = this.ActionsEqual(actions, this.actions.assignable.value);
+        this.lastTimeStamp = state.timeStamp;
+        const actionsEqual = this.ActionsEqual(state.actions, this.actions$.assignable.value.actions);
         if (actionsEqual) {
             return;
         }
         //if lastTimeStamp === this.lastTimeStamp *here* then it means that we are catching
         // up and we might want to notify someone
-        this._actions.next(actions);
+        this._actions.next(state);
     }
     private ActionsEqual(first: readonly Action[], second: readonly Action[]): boolean {
         if (first.length !== second.length) {
@@ -74,14 +79,10 @@ export class ActionSequence {
         if (first.length === 0 && second.length === 0) {
             return true;
         }
-        for (const firstAction of first) {
-            for (const secondAction of second) {
-                if (!this.ActionEqual(firstAction, secondAction)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return !!(first.every((firstAction, index) => {
+            const secondAction = second[index];
+            return this.ActionEqual(firstAction, secondAction);
+        }));
     }
     private ActionEqual(first: Action, second: Action) {
         return first.move === second.move &&
@@ -101,4 +102,8 @@ export type Action = {
     pickup: true
     move?: undefined;
 };
+export interface ActionState {
+    readonly actions: readonly Action[];
+    readonly timeStamp: number;
+}
 

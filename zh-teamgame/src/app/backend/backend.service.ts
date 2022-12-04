@@ -104,6 +104,7 @@ export class BackendService {
     ));
   }
   startNewRound(): void {
+    this.lastTimestamp = 0;
     this._round$.next({
       id: this.nextRoundId++,
       end: this.getRoundEnd(),
@@ -111,13 +112,32 @@ export class BackendService {
     });
   }
 
-  updateActions(teamId: string, actions: readonly ActionDescription[], timeStamp?: number) {
+  /**
+ * @deprecated This should only be used when faking data
+ */
+  mockUpdateActions(teamId: string, actions: readonly ActionDescription[], timeStamp: number) {
     const tsParam = timeStamp ?? (new Date().getTime());
     this._teamUpdate$.next({
       id: teamId,
       timeStamp: tsParam,
       actions: actions
     });
+  }
+
+  private lastTimestamp = 0;
+  /**Sends user provided chages to the action list to the backend */
+  public async updateActions(teamId: string, actions: ActionStateDescription): Promise<void> {
+    const delayMs = 200;
+    if (actions.timeStamp < this.lastTimestamp) {
+      return;
+    }
+    this.lastTimestamp = actions.timeStamp;
+    await new Promise((resolve) => setTimeout(() => resolve(1), delayMs));
+    this._teamUpdate$.next({
+      id: teamId,
+      timeStamp: actions.timeStamp + delayMs,
+      actions: actions.actions
+    })
   }
 
 }
@@ -197,4 +217,9 @@ export interface Round {
   readonly id: number;
   readonly end: Date;
   readonly maxActions: number;
+}
+
+export interface ActionStateDescription {
+  readonly actions: readonly ActionDescription[];
+  readonly timeStamp: number;
 }

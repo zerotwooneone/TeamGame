@@ -6,8 +6,9 @@ import { Game } from './domain/game/game';
 import { UserService } from './domain/user/user.service';
 import { User } from './domain/user/user';
 import { RoundContextService } from './domain/round/round-context.service';
-import { Observable } from 'rxjs';
 import { RoundContext } from './domain/round/round-context';
+import { concatMap, Observable, Subject, switchMap } from 'rxjs';
+import { ActionState } from './domain/round/action-sequence';
 
 @Component({
   selector: 'app-root',
@@ -29,11 +30,10 @@ export class AppComponent implements OnInit {
   }
   async ngOnInit(): Promise<void> {
 
-    this._disposableCollection.push(
-      this.roundContextService.BeginListening()
-    );
     this._disposableCollection.pushSubscription(
-      this.roundContextService.roundContext$.subscribe(r => this.roundContext = r)
+      this.roundContextService.roundContext$.subscribe(r => {
+        return this.onRoundContext(r);
+      })
     );
 
     this._disposableCollection.pushSubscription(
@@ -69,9 +69,26 @@ export class AppComponent implements OnInit {
       this.backend.round$.subscribe(s => this.OnRound(s))
     );
 
+    this._disposableCollection.pushSubscription(
+      this.actionsUpdated$.pipe(concatMap(async (actions) => {
+        if (!this.user) {
+          console.error("cannot update actions because there is no user");
+          return;
+        }
+        return this.backend.updateActions(this.user.teamId, actions);
+      })).subscribe()
+    )
+
+
     //simulate the backend pushing a new game to us
     this.backend.bootStrapStart();
 
+  }
+  private readonly actionsUpdatedSubject = new Subject<Observable<ActionState>>;
+  private readonly actionsUpdated$ = this.actionsUpdatedSubject.asObservable().pipe(switchMap(o => o));
+  onRoundContext(context: RoundContext): void {
+    this.roundContext = context;
+    this.actionsUpdatedSubject.next(this.roundContext.actions.actions$.observable$);
   }
 
   private OnStarting(state: GameStartState): void {
@@ -81,9 +98,16 @@ export class AppComponent implements OnInit {
       throw new Error(`didn't find game with id:${state.id}`);
     }
     this.game = game;
+    if (!this.user) {
+      throw new Error("cant start the game because the user is null");
+    }
 
-    //we have to prime the first context
-    this.roundContextService.OnNewRound(this.game.id);
+    this._disposableCollection.push(
+      this.roundContextService.BeginListening(
+        game.id,
+        this.user.teamId,
+        game.round.observable$)
+    );
   }
 
   private OnMove(event: TeamMoveEvent): void {
@@ -98,7 +122,7 @@ export class AppComponent implements OnInit {
       console.error('cannot update team when there is no round context');
       return;
     }
-    this.roundContext.actions.update(s.actions, s.timeStamp);
+    this.roundContext.actions.update({ actions: s.actions, timeStamp: s.timeStamp });
   }
 
   private OnUser(user: UserDetails) {
@@ -111,6 +135,10 @@ export class AppComponent implements OnInit {
       return;
     }
     this.gameService.onNewRound(this.game.id, s);
+
+    if (!this.user) {
+      throw new Error("cant start the game because the user is null");
+    }
   }
 
 }

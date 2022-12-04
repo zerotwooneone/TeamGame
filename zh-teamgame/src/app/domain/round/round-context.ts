@@ -1,13 +1,16 @@
+import { Team } from "../team/team";
 import { Action, ActionSequence } from "./action-sequence";
 import { Round } from "./round";
 
 export class RoundContext {
     constructor(
         readonly round: Round,
-        readonly actions: ActionSequence) { }
+        readonly actions: ActionSequence,
+        readonly team: Team) { }
     public static Factory(
         round: Round,
         lastTimeStamp: number,
+        team: Team,
         actions?: readonly Action[]): RoundContext {
         const actionsParam = ActionSequence.Factory(
             round.maxActions,
@@ -15,9 +18,11 @@ export class RoundContext {
             round.hasEnded,
             actions
         );
-        return new RoundContext(
+        const context = new RoundContext(
             round,
-            actionsParam
+            actionsParam,
+            team
         );
+        return context;
     }
 }

@@ -36,7 +36,7 @@ export class DevUtilComponent {
       return;
     }
     const newActions = this.appendMove(check.actions, "N");
-    this.backend.updateActions(check.team.id, newActions);
+    this.backend.mockUpdateActions(check.team.id, newActions, check.nextTimeStamp);
   }
   private appendMove(actions: Action[], direction: ActionDirection): Action[] {
     actions.push({
@@ -51,7 +51,7 @@ export class DevUtilComponent {
       return;
     }
     const newActions = this.appendMove(check.actions, "S");
-    this.backend.updateActions(check.team.id, newActions);
+    this.backend.mockUpdateActions(check.team.id, newActions, check.nextTimeStamp);
   }
   public moveTeamLeft(): void {
     const check = this.teamActionCheck();
@@ -59,7 +59,7 @@ export class DevUtilComponent {
       return;
     }
     const newActions = this.appendMove(check.actions, "W");
-    this.backend.updateActions(check.team.id, newActions);
+    this.backend.mockUpdateActions(check.team.id, newActions, check.nextTimeStamp);
   }
   public moveTeamRight(): void {
     const check = this.teamActionCheck();
@@ -67,7 +67,7 @@ export class DevUtilComponent {
       return;
     }
     const newActions = this.appendMove(check.actions, "E");
-    this.backend.updateActions(check.team.id, newActions);
+    this.backend.mockUpdateActions(check.team.id, newActions, check.nextTimeStamp);
   }
   public pickup(): void {
     const check = this.teamActionCheck();
@@ -78,20 +78,22 @@ export class DevUtilComponent {
     newActions.push({
       pickup: true
     });
-    this.backend.updateActions(check.team.id, newActions);
+    this.backend.mockUpdateActions(check.team.id, newActions, check.nextTimeStamp);
   }
-  private teamActionCheck(): { abortAction: true, team?: undefined, round?: undefined, actions?: undefined } | { abortAction?: false, team: Team, round: RoundContext, actions: Action[] } {
+  private teamActionCheck(): { abortAction: true, team?: undefined, round?: undefined, actions?: undefined, nextTimeStamp?: undefined } |
+    { abortAction?: false, team: Team, round: RoundContext, actions: Action[], nextTimeStamp: number } {
     if (
       !this.game ||
       !this.roundContext ||
-      !this.roundContext.actions.actions.assignable.hasBeenSet ||
+      !this.roundContext.actions.actions$.assignable.hasBeenSet ||
       !this.user) {
       return { abortAction: true };
     }
     return {
       team: this.game.teams[this.user.teamId],
       round: this.roundContext,
-      actions: this.roundContext.actions.actions.assignable.value.map(i => i)
+      actions: this.roundContext.actions.actions$.assignable.value.actions.map(i => i),
+      nextTimeStamp: this.roundContext.actions.actions$.assignable.value.timeStamp + 10
     };
   }
 }

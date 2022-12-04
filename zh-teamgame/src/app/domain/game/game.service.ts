@@ -75,7 +75,6 @@ export class GameService {
       config.maxActions
     );
     game.newRound(round);
-    this.bus.publishParam(Topics.NewRound, game.id);
   }
 }
 
