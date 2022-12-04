@@ -9,8 +9,10 @@ import { RoundContext } from '../domain/round/round-context';
   styleUrls: ['./action-history.component.scss']
 })
 export class ActionHistoryComponent {
+  private _roundContext?: RoundContext;
   @Input()
   set roundContext(value: RoundContext | undefined) {
+    this._roundContext = value;
     if (!value ||
       !value.actions.actions$.assignable.hasBeenSet) {
       return;
@@ -37,5 +39,12 @@ export class ActionHistoryComponent {
       case 'W': return "left";
       default: return undefined;
     }
+  }
+  public submit(): void {
+    if (!this._roundContext) {
+      console.error("cannot submit, there is no round context");
+      return;
+    }
+    this._roundContext?.actions.Submit();
   }
 }

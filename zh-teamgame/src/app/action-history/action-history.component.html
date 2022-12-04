@@ -5,4 +5,4 @@
         src="../../assets/token-movement/arrow.white.up.svg" />
     <img *ngIf="action.action == 'pickup'" class="action-icon" src="../../assets/token-movement/pickup.white.svg" />
 </div>
-<button mat-raised-button color="primary">Submit Actions</button>
+<button mat-raised-button color="primary" (click)="submit()">Submit Actions</button>

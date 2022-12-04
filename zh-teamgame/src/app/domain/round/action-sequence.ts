@@ -5,19 +5,23 @@ export class ActionSequence {
     get actions$(): ObservableProperty<ActionState> {
         return this._actions.property;
     }
+    get submitted$(): ObservableProperty<boolean> {
+        return this._submitted$.property;
+    }
     constructor(
         private readonly _actions: ObservablePropertyHelper<ActionState>,
         readonly maxActions: number,
         /**monotonically increasing value that represents how old the state is */
         private lastTimeStamp: number,
         readonly hasEnded: ObservableProperty<boolean>,
-        private _submitted?: boolean
+        private readonly _submitted$: ObservablePropertyHelper<boolean>
     ) { }
     public static Factory(
         maxActions: number,
         lastTimeStamp: number,
         hasEnded: ObservableProperty<boolean>,
-        actions?: readonly Action[]): ActionSequence {
+        actions?: readonly Action[],
+        submitted: boolean = false): ActionSequence {
         const actionParam: ActionState = {
             actions: actions ?? [],
             timeStamp: lastTimeStamp
@@ -29,11 +33,16 @@ export class ActionSequence {
             ),
             maxActions,
             lastTimeStamp,
-            hasEnded
+            hasEnded,
+            new ObservablePropertyHelper<boolean>(
+                submitted,
+                new BehaviorSubject<boolean>(submitted)
+            )
         )
     }
     public canAddAction(): boolean {
-        return !this._submitted &&
+        return (this.submitted$.assignable.hasBeenSet &&
+            !this.submitted$.assignable.value) &&
             (this.actions$.assignable.hasBeenSet &&
                 this.actions$.assignable.value.actions.length < this.maxActions) &&
             (this.hasEnded.assignable.hasBeenSet &&
@@ -90,7 +99,7 @@ export class ActionSequence {
     }
     /**Marks these actions as submitted. The actions cannot be changed by the user after this */
     public Submit(): void {
-        this._submitted = true;
+        this._submitted$.next(true);
     }
 }
 
