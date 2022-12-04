@@ -22,7 +22,36 @@
 
 .movement-container {
     background-color: lightseagreen;
-    &>button {
+    display: grid;
+        grid-template-areas:
+            "north-west north-middle north-east"
+            "center-west center-middle center-east"
+            "south-west south-middle south-east";
+        gap: 10px;
+    
+        .action {
+            &.move-north {
+                grid-area: north-middle;
+            }
+    
+            &.move-east {
+                grid-area: center-east;
+            }
+    
+            &.move-west {
+                grid-area: center-west;
+            }
+    
+            &.move-south {
+                grid-area: south-middle;
+            }
+    
+            &.pickup {
+                grid-area: center-middle;
+            }
+        }
+    
+        button {
             margin: 10px;
         }
 }

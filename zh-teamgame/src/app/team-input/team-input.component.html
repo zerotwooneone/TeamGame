@@ -4,19 +4,19 @@
             [ngStyle]="{'filter':teamTokenFilter}" class="team-token" /></span>
 </p>
 <div class="movement-container">
-    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveUp()">
+    <button class="action move-north" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveUp()">
         <img class="movement-arrow up" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveRight()">
+    <button class="action move-east" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveRight()">
         <img class="movement-arrow right" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveDown()">
+    <button class="action move-south" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveDown()">
         <img class="movement-arrow down" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveLeft()">
+    <button class="action move-west" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveLeft()">
         <img class="movement-arrow left" src="../../assets/token-movement/arrow.white.up.svg" />
     </button>
-    <button mat-raised-button color="primary" [disabled]="actionDisabled" (click)="pickup()">
+    <button class="action pickup" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="pickup()">
         <img class="pickup" src="../../assets/token-movement/pickup.white.svg" />
     </button>
 </div>
