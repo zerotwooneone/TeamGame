@@ -104,7 +104,10 @@ export class BackendService {
     ));
   }
   startNewRound(): void {
-    this.lastTimestamp = 0;
+    this.endOfRoundActions = {
+      timeStamp: 0,
+      actions: []
+    };
     this._round$.next({
       id: this.nextRoundId++,
       end: this.getRoundEnd(),
@@ -124,14 +127,18 @@ export class BackendService {
     });
   }
 
-  private lastTimestamp = 0;
+  /**this is a list of actions to playback when submit is clicked */
+  private endOfRoundActions: ActionStateDescription = {
+    timeStamp: 0,
+    actions: []
+  };
   /**Sends user provided chages to the action list to the backend */
   public async updateActions(teamId: string, actions: ActionStateDescription): Promise<void> {
     const delayMs = 200;
-    if (actions.timeStamp < this.lastTimestamp) {
+    if (actions.timeStamp < this.endOfRoundActions.timeStamp) {
       return;
     }
-    this.lastTimestamp = actions.timeStamp;
+    this.endOfRoundActions = actions;
     await new Promise((resolve) => setTimeout(() => resolve(1), delayMs));
     this._teamUpdate$.next({
       id: teamId,
