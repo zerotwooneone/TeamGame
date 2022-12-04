@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { filter, interval, map, Observable, take, takeUntil } from 'rxjs';
 import { Game } from '../domain/game/game';
 import { RoundContext } from '../domain/round/round-context';
 import { Team } from '../domain/team/team';
@@ -16,8 +17,46 @@ export class TeamInputComponent {
   @Input()
   game?: Game;
 
+  private _secondsLeft?: Observable<number>;
+  get secondsLeft(): Observable<number> | undefined {
+    return this._secondsLeft;
+  }
+  private _timeLeft?: Observable<string>;
+  get timeLeft(): Observable<string> | undefined {
+    return this._timeLeft;
+  }
+  private _roundContext?: RoundContext;
+  get roundContext(): RoundContext | undefined {
+    return this._roundContext;
+  }
   @Input()
-  roundContext?: RoundContext | null;
+  set roundContext(val: RoundContext | undefined) {
+    this._roundContext = val;
+    if (!this._roundContext) {
+      this._timeLeft = undefined;
+      return;
+    }
+    this._secondsLeft = interval(300).pipe(
+      map(_ => {
+        if (!this._roundContext) {
+          return 0;
+        }
+        const nowDate = new Date();
+        const nowTimestamp = nowDate.getTime();
+        const endDate = this._roundContext.round.end;
+        const endTimestamp = endDate.getTime();
+        return (endTimestamp - nowTimestamp) / 1000;
+      }),
+      takeUntil(this._roundContext.round.hasEnded.observable$.pipe(filter(h => h), take(1)))
+    );
+    this._timeLeft = this._secondsLeft.pipe(
+      map(totalSeconds => {
+        const minutes = Math.trunc(totalSeconds / 60);
+        const seconds = Math.round(totalSeconds % 60);
+        return `${minutes}:${String(seconds).padStart(2, "0")}`;
+      })
+    )
+  }
 
   get team(): Team | null {
     if (!this.user || !this.game) {

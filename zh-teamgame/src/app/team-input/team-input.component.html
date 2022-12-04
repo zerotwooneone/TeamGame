@@ -3,6 +3,7 @@
         class="team-name">{{user.teamId}}</span><span class="team-token"><img *ngIf="teamShape" [src]="teamShape"
             [ngStyle]="{'filter':teamTokenFilter}" class="team-token" /></span>
 </p>
+<div class="round-timer" *ngIf="timeLeft">Time Left: {{timeLeft|async}}</div>
 <div class="movement-container">
     <button class="action move-north" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveUp()">
         <img class="movement-arrow up" src="../../assets/token-movement/arrow.white.up.svg" />
