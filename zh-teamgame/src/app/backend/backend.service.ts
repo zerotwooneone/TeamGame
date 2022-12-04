@@ -146,6 +146,10 @@ export class BackendService {
       actions: actions.actions
     })
   }
+  /**send a signal to the backend that this team has finished selecting actions */
+  public async submit(teamId: string): Promise<void> {
+    //todo: call the backend
+  }
 
 }
 
