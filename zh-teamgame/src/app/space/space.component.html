@@ -1,1 +1,2 @@
-<zh-space-content [team]="team$ | async" [pickup]="pickup$ |async"></zh-space-content>
+<zh-space-content [team]="team$ | async" [pickup]="pickup$ |async" [dropOff]="dropOff"
+    [ngStyle]="{'border-color':dropOff?.color}" [ngClass]="{'drop-off':dropOff}"></zh-space-content>

@@ -6,5 +6,7 @@
     <div class="pickup-container" *ngIf="teamPickup">
         <img class="pickup-token" [ngStyle]="{'filter':teamPickupFilter}" [src]="teamPickupShape" />
     </div>
-
+</div>
+<div *ngIf="dropOffLetter" class="dropoff-container">
+    <span>{{dropOffLetter}}</span>
 </div>

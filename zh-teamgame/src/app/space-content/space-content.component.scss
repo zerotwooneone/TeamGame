@@ -38,3 +38,21 @@
     border: dashed purple 4px;
     margin: 10px;
 }
+.dropoff-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 5em;
+    color: rgba($color: #000000, $alpha: 0.7);
+
+    &>* {
+        display: block;
+    }
+}

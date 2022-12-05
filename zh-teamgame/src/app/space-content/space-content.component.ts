@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Pickup } from '../domain/pickup/pickup';
+import { DropOff } from '../domain/space/drop-off';
 import { Team } from '../domain/team/team';
 
 @Component({
@@ -17,6 +18,8 @@ export class SpaceContentComponent {
   team: Team | null = null;
   @Input()
   pickup: Pickup | null = null;
+  @Input()
+  dropOff?: DropOff;
 
   get teamFilter(): string | undefined {
     if (!this.team) {
@@ -61,6 +64,8 @@ export class SpaceContentComponent {
     }
     return this.pickup.shape;
   }
-
+  get dropOffLetter(): string | undefined {
+    return this.dropOff?.letter;
+  }
 
 }
