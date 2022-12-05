@@ -13,11 +13,11 @@ export class Space {
     get pickup$(): NullableObservableProperty<Pickup> {
         return this._pickup$.property;
     }
-    get canPickup(): boolean {
+    get canRemovePickup(): boolean {
         return this.pickup$.nullable.hasBeenSet &&
             !!this.pickup$.nullable.value;
     }
-    get canPutdown(): boolean {
+    get canAddPickup(): boolean {
         return this.pickup$.nullable.hasBeenSet &&
             !this.pickup$.nullable.value;
     }
@@ -55,18 +55,22 @@ export class Space {
         }
         this._team$.next(null);
     }
-    public putdown(pickup: Pickup): void {
-        if (!this.canPickup) {
+    public addPickup(pickup: Pickup): void {
+        if (!this.canAddPickup) {
             console.warn(`cannot pickup`, pickup);
             return;
         }
         this._pickup$.next(pickup);
     }
-    public pickup(): void {
-        if (!this.canPutdown) {
+    public removePickup(): Pickup | undefined {
+        if (!this.canRemovePickup) {
             console.warn(`cannot put down`);
             return;
         }
-        this._pickup$.next(null);
+        const result = this.pickup$.nullable.value ?? undefined;
+        if (!!result) {
+            this._pickup$.next(null);
+        }
+        return result;
     }
 }

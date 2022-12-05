@@ -46,19 +46,21 @@ export class TeamToken {
     public move(location: BoardLocationConfig) {
         this._location = location;
     }
-    public pickup(pickup: Pickup): void {
+    public addPickup(pickup: Pickup): void {
         if (!this.canPickup) {
             console.warn(`cannot pickup`, pickup);
             return;
         }
         this._pickup = pickup;
     }
-    public putdown(): void {
+    public removePickup(): Pickup | undefined {
         if (!this.canPutDown) {
             console.warn(`cannot put down`);
-            return;
+            return this._pickup;
         }
+        const result = this._pickup;
         this._pickup = undefined;
+        return result;
     }
 }
 

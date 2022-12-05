@@ -45,7 +45,7 @@ export class GameService {
       console.error("cannot move when game is not found");
       return;
     }
-    game.handleMove(event);
+    game.handleAction(event);
   }
 
   public onRoundEnd(gameId: string) {
@@ -86,10 +86,18 @@ interface gameStartParam {
   readonly pickups: readonly PickupConfig[];
 }
 
+type TeamAction = {
+  readonly id: string;
+  readonly location: BoardLocationConfig;
+  readonly pickup?: undefined;
+} |
+{
+  readonly id: string;
+  readonly location?: undefined;
+  readonly pickup?: true;
+};
+
 export interface TeamMoveEvent {
-  readonly teams: readonly {
-    readonly id: string,
-    readonly location: BoardLocationConfig
-  }[];
+  readonly teams: readonly TeamAction[];
 }
 

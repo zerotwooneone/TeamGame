@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendService, GameStartState, Round, TeamMoveEvent, TeamUpdate, UserDetails } from './backend/backend.service';
+import { BackendService, GameStartState, Round, TeamActionEvent, TeamUpdate, UserDetails } from './backend/backend.service';
 import { GameService } from './domain/game/game.service';
 import { DisposableCollection } from './domain/model/Disposable';
 import { Game } from './domain/game/game';
@@ -127,7 +127,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  private OnMove(event: TeamMoveEvent): void {
+  private OnMove(event: TeamActionEvent): void {
     if (!this.game) {
       console.error('cannot move when there is no game');
       return;

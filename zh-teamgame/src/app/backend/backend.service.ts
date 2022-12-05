@@ -11,8 +11,8 @@ export class BackendService {
   private readonly _roundEnd$: Subject<void>;
   private readonly _round$: Subject<Round>;
   get starting$(): Observable<GameStartState> { return this._starting$.asObservable(); }
-  private readonly _teamMove$: Subject<TeamMoveEvent>;
-  get teamMove$(): Observable<TeamMoveEvent> { return this._teamMove$.asObservable(); }
+  private readonly _teamMove$: Subject<TeamActionEvent>;
+  get teamMove$(): Observable<TeamActionEvent> { return this._teamMove$.asObservable(); }
   private readonly _teamUpdate$: Subject<TeamUpdate>;
   get teamUpdate$(): Observable<TeamUpdate> { return this._teamUpdate$.asObservable(); }
   private readonly _user$: Subject<UserDetails>;
@@ -23,7 +23,7 @@ export class BackendService {
     readonly httpClient: HttpClient,
   ) {
     this._starting$ = new Subject<GameStartState>();
-    this._teamMove$ = new Subject<TeamMoveEvent>();
+    this._teamMove$ = new Subject<TeamActionEvent>();
     this._teamUpdate$ = new Subject<TeamUpdate>();
     this._user$ = new Subject<UserDetails>();
     this._roundEnd$ = new Subject<void>();
@@ -86,19 +86,17 @@ export class BackendService {
 
     //simulate team movement
     const team1Id = "1";
-    const team1Positions: readonly BoardLocation[] = [
-      { row: 0, column: 1 },
-      { row: 0, column: 2 },
-      { row: 1, column: 2 },
-      { row: 0, column: 2 }
+    const team1Positions: readonly TeamActionEvent[] = [
+      { teams: [{ id: team1Id, pickup: true }] },
+      { teams: [{ id: team1Id, location: { row: 0, column: 1 } }] },
+      { teams: [{ id: team1Id, location: { row: 0, column: 2 } }] },
+      { teams: [{ id: team1Id, location: { row: 1, column: 2 } }] },
+      { teams: [{ id: team1Id, location: { row: 0, column: 2 } }] }
     ];
     lastValueFrom(of("s").pipe(
       delay(1000),
       switchMap(_ => interval(1000)),
       map(n => team1Positions[n % team1Positions.length]),
-      map(l => {
-        return { teams: [{ id: team1Id, location: l }] } as TeamMoveEvent;
-      }),
       take(9),
       tap(tme => this._teamMove$.next(tme))
     ));
@@ -217,11 +215,19 @@ interface Space {
   readonly impassible?: boolean;
 }
 
-export interface TeamMoveEvent {
-  readonly teams: readonly {
-    readonly id: string,
-    readonly location: BoardLocation
-  }[];
+type TeamAction = {
+  readonly id: string;
+  readonly location: BoardLocation;
+  readonly pickup?: undefined;
+} |
+{
+  readonly id: string;
+  readonly location?: undefined;
+  readonly pickup: true;
+};
+
+export interface TeamActionEvent {
+  readonly teams: readonly TeamAction[];
 }
 
 export interface Round {

@@ -63,6 +63,7 @@ export class Board {
     }
     public moveTeam(team: Team,
         newLocation: BoardLocationConfig) {
+        //todo: check valid location
         this.removeTeam(team.token.location);
         this.addTeam(team, newLocation);
         team.token.move(newLocation);
@@ -78,6 +79,51 @@ export class Board {
             return;
         }
         space.removeTeam();
+    }
+    public hasPickup(location: BoardLocationConfig): boolean {
+        const space = this.getSpace(location);
+        if (!space) {
+            return false;
+        }
+        return space.canRemovePickup;
+    }
+    private getSpace(location: BoardLocationConfig): Space | undefined {
+        if (!this.validLocation(location)) {
+            console.error("cannot get space, bad location", location);
+            return undefined;
+        }
+        return this.rows[location.row][location.column];
+    }
+
+    private validLocation(location: BoardLocationConfig): boolean {
+        return location.row >= 0 &&
+            location.column >= 0 &&
+            location.row < this.rowCount &&
+            location.column < this.columnCount
+    }
+    public removePickup(location: BoardLocationConfig): Pickup | undefined {
+        if (!this.validLocation(location)) {
+            console.error("cannot remove pickup, bad location", location);
+            return undefined;
+        }
+        const space = this.getSpace(location);
+        if (!space) {
+            console.error("cannot remove pickup, space does not exist", location);
+            return undefined;
+        }
+        return space.removePickup();
+    }
+    public addPickup(pickup: Pickup, location: BoardLocationConfig): void {
+        if (!this.validLocation(location)) {
+            console.error("cannot remove pickup, bad location", location);
+            return undefined;
+        }
+        const space = this.getSpace(location);
+        if (!space) {
+            console.error("cannot remove pickup, space does not exist", location);
+            return undefined;
+        }
+        space.addPickup(pickup);
     }
 }
 

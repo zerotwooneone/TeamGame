@@ -4,7 +4,7 @@ import { ObservableProperty, ObservablePropertyHelper } from "../model/Observabl
 import { Pickup } from "../pickup/pickup";
 import { Round } from "../round/round";
 import { Team } from "../team/team";
-import { TeamMoveEvent } from "./game.service";
+import { TeamMoveEvent as TeamActionEvent } from "./game.service";
 import { gameState } from "./gameState";
 
 export class Game {
@@ -62,15 +62,56 @@ export class Game {
             pickupByPickupId
         )
     }
-    public handleMove(event: TeamMoveEvent) {
-        for (const newTeam of event.teams) {
-            const team = this._teams[newTeam.id];
+    public handleAction(event: TeamActionEvent) {
+        for (const teamAction of event.teams) {
+            const team = this._teams[teamAction.id];
             if (!team) {
-                console.error(`cannot move team that does not exist id:${newTeam.id}`);
+                console.error(`cannot move team that does not exist id:${teamAction.id}`);
                 continue;
             }
-            this.board.moveTeam({ id: newTeam.id, token: team.token }, newTeam.location);
+            if (teamAction.pickup) {
+                this.handlePickupAction(team);
+
+            }
+            else if (teamAction.location) {
+                this.board.moveTeam({ id: teamAction.id, token: team.token }, teamAction.location);
+            }
         }
+    }
+    handlePickupAction(team: Team) {
+        const spaceHasPickup = this.board.hasPickup(team.token.location);
+        const teamHasPickup = !!team.token.heldPickup;
+        if ((spaceHasPickup && teamHasPickup) ||
+            (!spaceHasPickup && !teamHasPickup)) {
+            //this._pickupCollision$.next(team.id);
+            return;
+        }
+        if (spaceHasPickup) {
+            const pickup = this.board.removePickup(team.token.location);
+            if (!pickup) {
+                console.error(`pickup not found at`, team.token.location);
+                return;
+            }
+            if (!team.token.canPickup) {
+                console.error(`team ${team.id} cannot pickup`, team.token.location);
+                this.board.addPickup(pickup, team.token.location);
+                return;
+            }
+            team.token.addPickup(pickup);
+            return;
+        }
+
+        //team has pickup
+        if (!team.token.canPutDown) {
+            console.error(`team ${team.id} cannot put down`, team.token.location);
+            return;
+        }
+        const pickup = team.token.removePickup();
+        if (!pickup) {
+            console.error(`pickup does not exist on team ${team.id}`);
+            return;
+        }
+        this.board.addPickup(pickup, team.token.location);
     }
     public newRound(round: Round) {
         this._round.next(round);
