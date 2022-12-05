@@ -3,6 +3,7 @@ import { Team } from "../team/team";
 import { BoardLocationConfig } from "../space/BoardLocation";
 import { BoardLayout, ColumnArray, SpaceDetails } from "./BoardLayout";
 import { Pickup } from "../pickup/pickup";
+import { DropOff } from "../space/drop-off";
 
 export class Board {
     constructor(
@@ -15,7 +16,8 @@ export class Board {
     public static Factory(
         layout: BoardLayout,
         teamTokenLookup: Readonly<TeamByBoardLocation>,
-        pickupLookup: Readonly<PickupByBoardLocation>): Board {
+        pickupLookup: Readonly<PickupByBoardLocation>,
+        dropOffLookup: Readonly<DropoffByLocation>): Board {
         const columnCount = layout.rows.reduce((prevMax, column) => {
             if (column.length > prevMax) {
                 return column.length;
@@ -29,26 +31,29 @@ export class Board {
         return new Board(
             rowCount,
             columnCount,
-            this.GetRows(layout.rows, teamTokenLookup, pickupLookup),
+            this.CreateRows(layout.rows, teamTokenLookup, pickupLookup, dropOffLookup),
             layout.spaceSize,
             rowDefinition,
             columnDefinition
         )
     }
-    private static GetRows(
+    private static CreateRows(
         rows: readonly ColumnArray[],
         teamLookup: Readonly<TeamByBoardLocation>,
-        pickupLookup: Readonly<PickupByBoardLocation>): RowCollection {
+        pickupLookup: Readonly<PickupByBoardLocation>,
+        dropOffLookup: Readonly<DropoffByLocation>): RowCollection {
         const handleSpaces = (
             s: SpaceDetails,
             rowIndex: number,
             columnIndex: number) => {
             const team = teamLookup[rowIndex]?.[columnIndex];
             const pickup = pickupLookup[rowIndex]?.[columnIndex];
+            const dropoff = dropOffLookup[rowIndex]?.[columnIndex];
             return Space.Factory(
                 !s.impassible,
                 team,
-                pickup);
+                pickup,
+                dropoff);
         }
         return rows.map((row, rowIndex) =>
             row.map((space, columnIndex) =>
@@ -130,6 +135,7 @@ export class Board {
 type boardLocationLookup<T> = { [rowIndex: number]: { [columnIndex: number]: T } };
 export type TeamByBoardLocation = boardLocationLookup<Team>;
 export type PickupByBoardLocation = boardLocationLookup<Pickup>;
+export type DropoffByLocation = boardLocationLookup<DropOff>;
 
 export type RowCollection = readonly Row[];
 export type Row = readonly Space[];

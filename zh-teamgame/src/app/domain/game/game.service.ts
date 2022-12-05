@@ -11,6 +11,7 @@ import { BoardLocationConfig } from '../space/BoardLocation';
 import { Game } from './game';
 import { GameRepositoryService } from './game-repository.service';
 import { PickupConfig } from '../pickup/PickupConfig';
+import { DropOffConifg } from '../space/DropOffConifg';
 
 @Injectable({
   providedIn: DomainModule
@@ -28,7 +29,8 @@ export class GameService {
       state.board,
       state.teams,
       state.round,
-      state.pickups);
+      state.pickups,
+      state.dropOffs);
     this.gameRepo.put(game);
     //this.bus.publishParam(Topics.GameCreated, game.id);
 
@@ -84,6 +86,7 @@ interface gameStartParam {
   readonly teams: readonly TeamConfig[];
   readonly round: RoundConfig;
   readonly pickups: readonly PickupConfig[];
+  readonly dropOffs: readonly DropOffConifg[]
 }
 
 type TeamAction = {

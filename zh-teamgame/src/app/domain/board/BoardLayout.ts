@@ -6,4 +6,5 @@ export interface BoardLayout {
 export type ColumnArray = readonly SpaceDetails[];
 export interface SpaceDetails {
     readonly impassible?: boolean;
+    readonly dropOffLetter?: string;
 }

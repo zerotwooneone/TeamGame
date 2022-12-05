@@ -64,6 +64,10 @@ export class BackendService {
         { id: "pickup1", color: "Red", shape: "Square", location: { row: 2, column: 1 }, classes: ["Red", "Square"] },
         { id: "pickup2", color: "Aqua", shape: "Spiral", location: { row: 0, column: 1 }, classes: ["Aqua", "Spiral"] },
         { id: "pickup3", color: "Magenta", shape: "Triangle", location: { row: 3, column: 4 }, classes: ["Magenta", "Triangle"] },
+      ],
+      dropOffs: [
+        { Letter: "A", Color: "Violet" },
+        { Letter: "B", Color: "Blue" },
       ]
     };
     this._starting$.next(gameStartState);
@@ -162,6 +166,7 @@ export interface GameStartState {
   readonly teams: readonly Team[];
   readonly round: Round;
   readonly pickups: readonly PickupDesc[];
+  readonly dropOffs: readonly DropOffDesc[]
 }
 
 export interface PickupDesc {
@@ -213,6 +218,12 @@ export interface Board {
 type ColumnArray = readonly Space[];
 interface Space {
   readonly impassible?: boolean;
+  readonly dropOffLetter?: string;
+}
+
+export interface DropOffDesc {
+  readonly Letter: string;
+  readonly Color: string;
 }
 
 type TeamAction = {

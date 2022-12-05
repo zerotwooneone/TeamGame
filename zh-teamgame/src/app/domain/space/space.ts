@@ -2,6 +2,7 @@ import { BehaviorSubject } from "rxjs";
 import { NullableObservableProperty, NullableObservablePropertyHelper } from "../model/ObservablePropertyHelper";
 import { Pickup } from "../pickup/pickup";
 import { Team } from "../team/team";
+import { DropOff } from "./drop-off";
 
 export class Space {
     get passible(): boolean {
@@ -24,11 +25,13 @@ export class Space {
     constructor(
         private _passible: boolean,
         private readonly _team$: NullableObservablePropertyHelper<Team>,
-        private readonly _pickup$: NullableObservablePropertyHelper<Pickup>) { }
+        private readonly _pickup$: NullableObservablePropertyHelper<Pickup>,
+        readonly dropOff?: DropOff) { }
     public static Factory(
         passible: boolean,
         team?: Team | null,
-        pickup?: Pickup | null): Space {
+        pickup?: Pickup | null,
+        dropOff?: DropOff | null): Space {
         const teamParam = team ?? null;
         const teamHelper = new NullableObservablePropertyHelper<Team>(
             teamParam,
@@ -37,10 +40,12 @@ export class Space {
         const pickupHelper = new NullableObservablePropertyHelper<Pickup>(
             pickupParam,
             new BehaviorSubject<Pickup | null>(pickupParam));
+        const dropOffParam = dropOff ?? undefined;
         return new Space(
             passible,
             teamHelper,
-            pickupHelper);
+            pickupHelper,
+            dropOffParam);
     }
     public replaceTeam(team?: Team): void {
         this._team$.next(team ?? null);

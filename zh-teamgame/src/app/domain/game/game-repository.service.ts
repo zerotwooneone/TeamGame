@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Board, PickupByBoardLocation, TeamByBoardLocation } from '../board/board';
+import { Board, DropoffByLocation, PickupByBoardLocation, TeamByBoardLocation } from '../board/board';
 import { BoardLayout } from '../board/BoardLayout';
 import { DomainModule } from '../domain.module';
 import { Pickup } from '../pickup/pickup';
@@ -7,6 +7,8 @@ import { PickupConfig } from '../pickup/PickupConfig';
 import { Round } from '../round/round';
 import { RoundConfig } from '../round/RoundConfig';
 import { BoardLocationConfig } from '../space/BoardLocation';
+import { DropOff } from '../space/drop-off';
+import { DropOffConifg } from '../space/DropOffConifg';
 import { Team } from '../team/team';
 import { TeamToken } from '../team/team-token';
 import { TeamConfig } from '../team/TeamConfig';
@@ -22,7 +24,8 @@ export class GameRepositoryService {
     boardLayout: BoardLayout,
     teams: readonly TeamConfig[],
     round: RoundConfig,
-    pickups: readonly PickupConfig[]): Game {
+    pickups: readonly PickupConfig[],
+    dropOffs: readonly DropOffConifg[]): Game {
 
     const pickupConfigbyPickupId = pickups.reduce((dict, pc) => {
       dict[pc.id] = pc;
@@ -76,9 +79,10 @@ export class GameRepositoryService {
       dict[pickupWithLocation.rowIndex][pickupWithLocation.columnIndex] = pickupWithLocation.pickup;
       return dict;
     }, {} as PickupByBoardLocation);
+    const dropOffByBoardLocation = this.getDropOffLookup(boardLayout, dropOffs);
     return Game.Factory(
       id,
-      Board.Factory(boardLayout, teamByBoardLocation, pickupByBoardLocation),
+      Board.Factory(boardLayout, teamByBoardLocation, pickupByBoardLocation, dropOffByBoardLocation),
       teamsParam,
       Round.Factory(
         round.id,
@@ -86,6 +90,29 @@ export class GameRepositoryService {
         round.maxActions
       ),
       pickupsParam);
+  }
+  getDropOffLookup(boardLayout: BoardLayout, dropOffs: readonly DropOffConifg[]): Readonly<DropoffByLocation> {
+    const dropOffByLetter = dropOffs.reduce((dict, dropOffConfig) => {
+      dict[dropOffConfig.Letter] = DropOff.Factory(dropOffConfig.Color, dropOffConfig.Letter);
+      return dict;
+    }, {} as { [letter: string]: DropOff });
+
+    return boardLayout.rows.reduce((dict, row, rowIndex) => {
+      row.forEach((space, columnIndex) => {
+        if (space.dropOffLetter) {
+          const dropOff = dropOffByLetter[space.dropOffLetter];
+          if (!dropOff) {
+            console.error(`could not find dropOff:${space.dropOffLetter}`);
+            return;
+          }
+          if (!dict[rowIndex]) {
+            dict[rowIndex] = {};
+          }
+          dict[rowIndex][columnIndex] = dropOff;
+        }
+      });
+      return dict;
+    }, {} as DropoffByLocation)
   }
   put(game: Game): Promise<void> {
     this._game = game;
@@ -95,5 +122,4 @@ export class GameRepositoryService {
     return this._game;
   }
 }
-
 

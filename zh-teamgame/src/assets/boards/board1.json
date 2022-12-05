@@ -1,26 +1,10 @@
 {
     "rows":[
-        [
-            {
-                "impassible": true
-            },
-            {},
-            {},
-            {},
-            {
-                "impassible": true
-            }
-        ],
+        [{"impassible": true},{},{},{"dropOffLetter":"B"},{"impassible": true}],
         [{"impassible": true},    {"impassible": true}, {}, {"impassible": true}, {"impassible": true}],
         [{},    {}, {}, {}, {}],
         [{},    {}, {}, {}, {}],
-        [
-            {},
-            {},
-            {},
-            {},
-            {}
-        ]
+        [{"dropOffLetter":"A"},    {}, {}, {}, {}]
     ],
     "spaceSize": 100
 }
