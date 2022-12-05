@@ -227,6 +227,7 @@ type TeamAction = {
 };
 
 export interface TeamActionEvent {
+  //todo: implement collisions
   readonly teams: readonly TeamAction[];
 }
 
