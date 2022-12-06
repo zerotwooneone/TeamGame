@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DomainModule } from '../domain.module';
-import { DisposableCollection } from '../model/Disposable';
+import { Objective } from '../objective/objective';
 import { User } from './user';
 import { UserDetails } from './UserDetails';
 
@@ -8,15 +8,12 @@ import { UserDetails } from './UserDetails';
   providedIn: DomainModule
 })
 export class UserService {
-  private readonly _disposables: DisposableCollection;
-  constructor() {
-    this._disposables = new DisposableCollection();
-  }
   init(user: UserDetails): User {
-    this._disposables.empty();
+    const objective = Objective.Factory(user.objectives);
     return User.Factory(
       user.id,
-      user.teamId
+      user.teamId,
+      [objective]
     )
   }
 }

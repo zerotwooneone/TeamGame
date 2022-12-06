@@ -158,6 +158,42 @@ export class BackendService {
 export interface UserDetails {
   readonly id: string;
   readonly teamId: string;
+  readonly objectives: readonly ObjectiveConfig[];
+}
+
+export type ObjectiveConfig = {
+  text: string,
+  token?: undefined
+} | {
+  text?: undefined,
+  token: TokenLike
+}
+
+export type TokenLike =
+  { text: string, team?: undefined, pickup?: undefined, dropOff?: undefined } |
+  { text?: undefined, team: TeamStructure, pickup?: undefined, dropOff?: undefined } |
+  { text?: undefined, team?: undefined, pickup: PickupStructure, dropOff?: undefined } |
+  { text?: undefined, team?: undefined, pickup?: undefined, dropOff: DropOffStructure };
+
+
+interface DropOffStructure {
+  letter: string;
+  color: string;
+}
+
+interface PickupStructure {
+  readonly pickupId: string;
+  readonly token: ShapeStructure
+}
+
+interface TeamStructure {
+  readonly teamId: string;
+  readonly token: ShapeStructure
+}
+
+interface ShapeStructure {
+  readonly shape: string;
+  readonly color: string;
 }
 
 export interface GameStartState {

@@ -1,4 +1,19 @@
 {
     "id": "user1",
-    "teamId": "2"
+    "teamId": "2",
+    "objectives": [
+        { "token": { "pickup": {
+			"pickupId": "pickup1",
+			"token": { "color": "Red","shape": "Square"}
+			}}
+        },
+		{ "text": "to"
+        },
+		{ "token": { "dropOff": {
+			"letter": "A",
+			"color": "Red"
+			}}
+        }
+		
+    ]
 }
