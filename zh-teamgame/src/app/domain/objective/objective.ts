@@ -52,16 +52,11 @@ export class Objective {
                 continue;
             }
             if (token.dropOff) {
-                const filter = Color.ToColorFilter(token.dropOff.color);
-                if (!filter) {
-                    errors.push(`couldn't parse color for objective dropoff ${token.dropOff.letter}`);
-                    continue;
-                }
                 tokenized.push({
                     token: {
                         dropOff: {
                             letter: token.dropOff.letter,
-                            filter: filter
+                            color: token.dropOff.color
                         }
                     }
                 });
@@ -162,5 +157,5 @@ export type Token = {
 } | {
     readonly team?: undefined,
     readonly pickup?: undefined,
-    readonly dropOff: Readonly<{ readonly filter: ColorFilter, readonly letter: string }>
+    readonly dropOff: Readonly<{ readonly color: string, readonly letter: string }>
 }

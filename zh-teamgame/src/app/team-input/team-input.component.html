@@ -1,8 +1,3 @@
-<p *ngIf="user">
-    <span class="user-name">{{user.id}}</span> you are on team <span *ngIf="!teamShape"
-        class="team-name">{{user.teamId}}</span><span class="team-token"><img *ngIf="teamShape" [src]="teamShape"
-            [ngStyle]="{'filter':teamTokenFilter}" class="team-token" /></span>
-</p>
 <div class="round-timer" *ngIf="timeLeft">Time Left: {{timeLeft|async}}</div>
 <div class="movement-container">
     <button class="action move-north" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="moveUp()">
@@ -20,4 +15,32 @@
     <button class="action pickup" mat-raised-button color="primary" [disabled]="actionDisabled" (click)="pickup()">
         <img class="pickup" src="../../assets/token-movement/pickup.white.svg" />
     </button>
+</div>
+<div *ngIf="user">
+    <div>
+        <span>you are on team </span><span *ngIf="!teamShape" class="team-name">{{user.teamId}}</span><span
+            class="team-token"><img *ngIf="teamShape" [src]="teamShape" [ngStyle]="{'filter':teamTokenFilter}"
+                class="team-token" /></span>
+        <h2>{{user.id}} Objectives</h2>
+        <div *ngFor="let obj of user.objectives">
+            <span *ngFor="let token of obj.tokenized">
+                <span *ngIf="token.text">{{token.text}}</span>
+                <span *ngIf="token.token">
+                    <span *ngIf="token.token.pickup">
+                        <img [src]="token.token.pickup.shape" [ngStyle]="{'filter':token.token.pickup.filter}"
+                            class="team-token" />
+                    </span>
+                    <span *ngIf="token.token.dropOff" style="border-style:inset;"
+                        [ngStyle]="{'border-color':token.token.dropOff.color}">
+                        {{token.token.dropOff.letter}}
+                    </span>
+                    <span *ngIf="token.token.team">
+                        <img [src]="token.token.team.shape" [ngStyle]="{'filter':token.token.team.filter}"
+                            class="team-token" />
+                    </span>
+                </span>
+                <span>&nbsp;</span>
+            </span>
+        </div>
+    </div>
 </div>
